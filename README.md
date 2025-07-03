@@ -70,9 +70,11 @@ struct Node {
     int data;
     struct Node* next;
 };
-#### Node Structure:
+
+### ✅ Code:
 ```c
-struct Node {
-    int data;
-    struct Node* next;
-};
+newNode = (struct Node*)malloc(sizeof(struct Node));  // allocate memory for new node  
+newNode->data = value;                                // assign data to the new node  
+newNode->next = head;                                 // link new node to current head  
+head = newNode;                                       // update head to point to new node  
+
