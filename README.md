@@ -84,16 +84,22 @@ A **Circular Buffer (Ring Buffer)** is a fixed-size buffer that wraps around whe
 - dequeue() – Remove element from the buffer  
 - display() – Show current buffer content  
 - peek() – View the front element without removing  
-### 4️) State Machine
+### State Machine 
 
 This code implements a **Finite State Machine (FSM)** in C that simulates receiving and processing messages byte-by-byte.
 
-####  States:
-- STATE_WAIT_START – Idle state, waits for the first byte of a message  
+---
+
+### States
+
+- `STATE_WAIT_START` – Idle state, waits for the first byte of a message  
 - `STATE_RECEIVING` – Collects message bytes until `\n` is received  
 - `STATE_PROCESSING` – Triggers logic to process the complete message  
 - `STATE_SENDING_RESPONSE` – Sends a response (e.g., `"Fine"`) and resets  
 
-####  Events:
+---
+
+###  Events
+
 - `EVENT_BYTE_RECEIVED` – Triggered when a byte is received  
 - `EVENT_NONE` – Used internally to step through states  
