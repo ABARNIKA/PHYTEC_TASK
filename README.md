@@ -70,3 +70,9 @@ struct Node {
     int data;
     struct Node* next;
 };
+#### Node Structure:
+```c
+struct Node {
+    int data;
+    struct Node* next;
+};
