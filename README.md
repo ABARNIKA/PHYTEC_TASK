@@ -1,32 +1,32 @@
 # WEEK_1
 
-## ✅ Topics Covered
+## Topics Covered
 
-### 📡 Networking & OSI Model
+###  Networking & OSI Model
 - Detailed explanation of all OSI Layers  
 - Real-world protocol mapping (e.g., UDP at Transport Layer)  
 - Packet transmission using sockets in C  
 
-### 💡 C Programming Brush-up
+###  C Programming Brush-up
 - Pointers, arrays, structures  
 - Function pointers and callback functions  
 - Bitwise operations and byte packing  
 - State machine implementation  
 - Event-driven programming  
 
-### 🗂️ Data Structures
+###  Data Structures
 - Queue  
 - Linked List  
 - Circular Buffer  
 
-### 🔁 Embedded Concepts
+###  Embedded Concepts
 - RTOS, Superloop  
 - Thread  
 - Multithreading concepts  
 
 ---
 
-## 🌐 OSI Model (Open Systems Interconnection)
+##  OSI Model (Open Systems Interconnection)
 
 | Layer | Name         | Description                                   | Real-Time Protocols                                                  |
 |-------|--------------|-----------------------------------------------|----------------------------------------------------------------------|
@@ -40,9 +40,9 @@
 
 ---
 
-## 💻 Programs Implemented
+##  Programs Implemented
 
-### 1️⃣ Queue
+###  Queue
 A **queue** is a linear data structure that follows the **FIFO (First In, First Out)** principle.
 
 #### Queue Operations:
@@ -54,7 +54,7 @@ A **queue** is a linear data structure that follows the **FIFO (First In, First 
 
 ---
 
-### 2️⃣ Linked List
+### 2 Linked List
 A **Linked List** is a linear data structure in which each element (called a node) contains:
 
 - Data (value to store)  
@@ -68,40 +68,32 @@ struct Node {
     int data;
     struct Node* next;
 };
-### 2️⃣ Linked List
 
-A **Linked List** is a linear data structure in which each element (called a node) contains:
+####  Insertion at Beginning:
 
-- Data (value to store)  
-- Pointer (reference to the next node)  
-
-Unlike arrays, linked lists do not store data in contiguous memory. Each node points to the next, forming a chain.
-
-#### 🟢 Insertion at Beginning:
-```c
 newNode = (struct Node*)malloc(sizeof(struct Node));  // allocate memory for new node  
 newNode->data = value;                                // assign data to the new node  
 newNode->next = head;                                 // link new node to current head  
 head = newNode;                                       // update head to point to new node
-### 3️⃣ Circular Buffer (using Queue)
+### 3)Circular Buffer (using Queue)
 
 A **Circular Buffer (Ring Buffer)** is a fixed-size buffer that wraps around when it reaches the end, working like a queue.
 
-#### 🔁 Operations:
-- `enqueue()` – Add element to the buffer  
-- `dequeue()` – Remove element from the buffer  
-- `display()` – Show current buffer content  
-- `peek()` – View the front element without removing  
-### 4️⃣ State Machine
+####  Operations:
+- enqueue() – Add element to the buffer  
+- dequeue() – Remove element from the buffer  
+- display() – Show current buffer content  
+- peek() – View the front element without removing  
+### 4️) State Machine
 
 This code implements a **Finite State Machine (FSM)** in C that simulates receiving and processing messages byte-by-byte.
 
-#### 🧭 States:
-- `STATE_WAIT_START` – Idle state, waits for the first byte of a message  
+####  States:
+- STATE_WAIT_START – Idle state, waits for the first byte of a message  
 - `STATE_RECEIVING` – Collects message bytes until `\n` is received  
 - `STATE_PROCESSING` – Triggers logic to process the complete message  
 - `STATE_SENDING_RESPONSE` – Sends a response (e.g., `"Fine"`) and resets  
 
-#### ⚡ Events:
+####  Events:
 - `EVENT_BYTE_RECEIVED` – Triggered when a byte is received  
 - `EVENT_NONE` – Used internally to step through states  
