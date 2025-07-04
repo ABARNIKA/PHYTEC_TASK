@@ -1,59 +1,54 @@
-# UDP Chat Application in C
+UDP Chat Application in C
 
-This project implements a **UDP-based client-server chat system** using the C programming language. The client sends and receives messages to/from the server using datagram sockets (UDP). It is designed to work across systems, including running the server on a PC and the client on an embedded board like the **RBA5D2X**, enabling basic real-time communication like a chat application.
+This project implements a UDP-based client-server chat system using C. The client sends and receives messages to/from the server using datagram sockets (UDP).
 
 ---
 
-## 📁 Files
+## Files
 
 - `udp_client.c` → UDP Client Source Code  
 - `udp_server.c` → UDP Server Source Code  
 
 ---
 
-## ⚙️ How It Works
+##  How It Works
 
-- The **server** listens on a specific port and waits for messages from the client.
-- The **client** connects to the server using the server’s IP and port and sends messages.
-- The server receives and responds to each message, allowing an interactive back-and-forth exchange.
-- The chat runs in an infinite loop on both ends to maintain continuous communication.
-
----
-
-## 🧠 Concepts Used
-
-- Socket programming using `AF_INET` (IPv4) and `SOCK_DGRAM` (UDP)
-- Connectionless communication via UDP
-- Functions: `sendto()`, `recvfrom()`
-- Buffer usage and basic error handling
-- Infinite loop for persistent communication
-- Cross-compilation for embedded systems (RBA5D2X)
+- The server listens on a specific port and waits for messages from the client.
+- The client connects to the server using IP and port, then sends messages.
+- The server reads incoming messages and replies back interactively.
 
 ---
 
-## 🛠️ Compilation
+##  Concepts Used
 
-Use the `gcc` compiler to compile both the server and client for a regular PC environment.
+- Socket Programmingusing `AF_INET` and `SOCK_DGRAM`
+- UDP Communication(Connectionless)
+- `sendto()` and `recvfrom()` functions
+- Infinite communication loop
+- Basic error handling and buffer usage
 
-### On Host PC (Linux):
-```bash
-- gcc udp_server.c -o udp_server
-- gcc udp_client.c -o udp_client
-How to Run
-### 🖥️ Start the Server (on Host PC)
+---
 
-- ./udp_server <port>
+##  Compilation
+
+Use the `gcc` compiler to build both server and client programs:
+
+
+gcc udp_server.c -o udp_server
+gcc udp_client.c -o udp_client
+ How to Run
+ Start the Server
+
+./server <port>
 Example:
-- ./udp_server 8085
-## 📟 Start the Client
 
--./udp_client <server_ip> <server_port>
+
+./server 8085
+ Start the Client
+
+./client <server_ip> <server_port>
 Example:
-- **./udp_client 127.0.0.1 8085**
-##  Host (PC) and Client (RBA5D2X) Setup
-- In the same project, we implement a task where:
 
-- The host PC runs udp_server.c.
 
-- The RBA5D2X board acts as the client, communicating with the server over UDP like a chat application.
-
+./client 127.0.0.1 8085 
+In the same project, I want to implement a task where the host PC runs udp_server.c, and the RBA5D2X board acts as the client to communicate with the server, like a chat application. First, I need to modify the client file and cross-compile it for the RBA5D2X board using the appropriate board support files.
