@@ -1,31 +1,31 @@
-# 📘 Week 1 - Embedded Systems & Networking Foundations
+# Week 1 - Embedded Systems & Networking Foundations
 
-## 📚 Topics Covered
+##  Topics Covered
 
 ### 🛰 Networking & OSI Model
 - Detailed explanation of all *OSI Layers*
 - Real-world protocol mapping (e.g., *UDP* at Transport Layer)
 - Packet transmission using *Sockets in C*
 
-### 💻 C Programming Brush-up
+###  C Programming Brush-up
 - *Pointers, Arrays, Structures*
 - *Function Pointers* and *Callback Functions*
 - *Bitwise Operations* and *Byte Packing*
 - *State Machine Implementation*
 - *Event-Driven Programming*
 
-### 📐 Data Structures
+###  Data Structures
 - *Queue*
 - *Linked List*
 - *Circular Buffer*
 
-### ⚙ Embedded Concepts
+###  Embedded Concepts
 - *RTOS, **Superloop*
 - *Threading & Multithreading Concepts*
 
 ---
 
-## 🗂 OSI Model (Open Systems Interconnection)
+##  OSI Model (Open Systems Interconnection)
 
 | Layer | Name         | Description                                 | Real-Time Protocols / Examples                             |
 |-------|--------------|---------------------------------------------|-------------------------------------------------------------|
@@ -39,7 +39,7 @@
 
 ---
 
-## 🧪 Programs Implemented
+##  Programs Implemented
 
 ### 1️⃣ Queue
 
