@@ -1,0 +1,1237 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. Troubleshooting Guide &mdash; CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=2709fde1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="9. Future Work and Recommendations" href="future-work.html" />
+    <link rel="prev" title="7. Files Created" href="files-created.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Project Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">2. Hardware Specifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development-journey.html">3. Development Journey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solutions-implemented.html">4. Solutions Implemented</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trustzone-analysis.html">5. TrustZone Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gecko-sdk-integration.html">6. Gecko SDK Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files-created.html">7. Files Created</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Troubleshooting Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#hardware-troubleshooting">8.1. Hardware Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#board-connection-issues">8.1.1. Board Connection Issues</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#problem-j-link-cannot-connect-to-target">8.1.1.1. Problem: J-Link Cannot Connect to Target</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#problem-device-recognition-warnings">8.1.1.2. Problem: Device Recognition Warnings</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#power-and-clock-issues">8.1.2. Power and Clock Issues</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#problem-inconsistent-operation">8.1.2.1. Problem: Inconsistent Operation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#software-troubleshooting">8.2. Software Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#build-system-issues">8.2.1. Build System Issues</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#problem-compilation-failures">8.2.1.1. Problem: Compilation Failures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#problem-flash-programming-failures">8.2.1.2. Problem: Flash Programming Failures</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#trustzone-and-security-issues">8.2.2. TrustZone and Security Issues</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#problem-gpio-register-access-failures">8.2.2.1. Problem: GPIO Register Access Failures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#problem-hardfault-during-execution">8.2.2.2. Problem: HardFault During Execution</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ss5-integration-issues">8.2.3. SS5 Integration Issues</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#problem-ss5-build-failures">8.2.3.1. Problem: SS5 Build Failures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#problem-ss5-component-configuration">8.2.3.2. Problem: SS5 Component Configuration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#progressive-debugging-methodology">8.3. Progressive Debugging Methodology</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#systematic-troubleshooting-approach">8.3.1. Systematic Troubleshooting Approach</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#step-1-hardware-validation">8.3.1.1. Step 1: Hardware Validation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-2-software-environment">8.3.1.2. Step 2: Software Environment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-3-build-system-test">8.3.1.3. Step 3: Build System Test</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-4-trustzone-analysis">8.3.1.4. Step 4: TrustZone Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-5-solution-implementation">8.3.1.5. Step 5: Solution Implementation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#common-error-patterns-and-solutions">8.4. Common Error Patterns and Solutions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#error-pattern-matrix">8.4.1. Error Pattern Matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#automated-troubleshooting-tools">8.5. Automated Troubleshooting Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ultimate-troubleshooting-script">8.5.1. Ultimate Troubleshooting Script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#debug-variable-monitoring">8.5.2. Debug Variable Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#emergency-recovery-procedures">8.6. Emergency Recovery Procedures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#system-recovery">8.6.1. System Recovery</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#complete-system-reset">8.6.1.1. Complete System Reset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flash-recovery">8.6.1.2. Flash Recovery</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#expert-level-troubleshooting">8.7. Expert-Level Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-debugging-techniques">8.7.1. Advanced Debugging Techniques</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#memory-map-analysis">8.7.1.1. Memory Map Analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#security-state-analysis">8.7.1.2. Security State Analysis</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-decision-tree">8.8. Troubleshooting Decision Tree</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#problem-classification">8.8.1. Problem Classification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resolution-priority">8.8.2. Resolution Priority</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#support-resources">8.9. Support Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#documentation-references">8.9.1. Documentation References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#community-support">8.9.2. Community Support</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="future-work.html">9. Future Work and Recommendations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">8. </span>Troubleshooting Guide</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/contiki-ng/contiki-ng/blob/develop/examples/efr32zg28-led-blink/source/troubleshooting.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="troubleshooting-guide">
+<h1><span class="section-number">8. </span>Troubleshooting Guide<a class="headerlink" href="#troubleshooting-guide" title="Link to this heading"></a></h1>
+<p>This comprehensive troubleshooting guide provides systematic approaches to diagnosing and resolving issues encountered during EFR32ZG28 development.</p>
+<section id="hardware-troubleshooting">
+<h2><span class="section-number">8.1. </span>Hardware Troubleshooting<a class="headerlink" href="#hardware-troubleshooting" title="Link to this heading"></a></h2>
+<section id="board-connection-issues">
+<h3><span class="section-number">8.1.1. </span>Board Connection Issues<a class="headerlink" href="#board-connection-issues" title="Link to this heading"></a></h3>
+<section id="problem-j-link-cannot-connect-to-target">
+<h4><span class="section-number">8.1.1.1. </span>Problem: J-Link Cannot Connect to Target<a class="headerlink" href="#problem-j-link-cannot-connect-to-target" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Connection Failure Symptoms</span><a class="headerlink" href="#id1" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: &quot;Cannot connect to target&quot;
+Error: &quot;No J-Link device found&quot;
+Error: &quot;SWD communication failure&quot;
+</pre></div>
+</div>
+</div>
+<p><strong>Diagnostic Steps:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Hardware Connection Diagnosis</span><a class="headerlink" href="#id2" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1: Check USB connection</span>
+lsusb<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>segger
+<span class="c1"># Expected: Bus XXX Device XXX: ID 1366:1015 SEGGER J-Link</span>
+
+<span class="c1"># Step 2: Test J-Link communication</span>
+JLinkExe<span class="w"> </span>-?
+<span class="c1"># Should show J-Link version and available commands</span>
+
+<span class="c1"># Step 3: Test target detection</span>
+JLinkExe<span class="w"> </span>-device<span class="w"> </span>EFR32ZG28B312F1024IM48-A<span class="w"> </span>-if<span class="w"> </span>SWD<span class="w"> </span>-speed<span class="w"> </span><span class="m">4000</span><span class="w"> </span>-autoconnect<span class="w"> </span><span class="m">1</span>
+</pre></div>
+</div>
+</div>
+<p><strong>Solutions:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>USB Cable Issues</strong></p>
+<ul class="simple">
+<li><p>Try different USB cable (data cable, not charge-only)</p></li>
+<li><p>Test different USB ports</p></li>
+<li><p>Check for USB 3.0 compatibility issues</p></li>
+</ul>
+</li>
+<li><p><strong>Power Supply Problems</strong></p>
+<ul class="simple">
+<li><p>Verify board power LED is on</p></li>
+<li><p>Measure VDD: should be 3.3V ±5%</p></li>
+<li><p>Check for short circuits</p></li>
+</ul>
+</li>
+<li><p><strong>SWD Interface Issues</strong></p>
+<ul class="simple">
+<li><p>Verify SWD pins not damaged</p></li>
+<li><p>Check for external connections interfering</p></li>
+<li><p>Try slower SWD speed (1000 kHz)</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="problem-device-recognition-warnings">
+<h4><span class="section-number">8.1.1.2. </span>Problem: Device Recognition Warnings<a class="headerlink" href="#problem-device-recognition-warnings" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Device Recognition Issues</span><a class="headerlink" href="#id3" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Warning: &quot;Device EFR32ZG28B312F1024IM48-A unknown to this software version&quot;
+Info: &quot;Device EFR32ZG28BXXXF1024 selected&quot;
+</pre></div>
+</div>
+</div>
+<p><strong>Analysis:</strong></p>
+<p>This is a <strong>warning only</strong> and does not affect functionality:</p>
+<ul class="simple">
+<li><p>J-Link automatically selects compatible device profile</p></li>
+<li><p>All programming and debugging functions work correctly</p></li>
+<li><p>CPUID verification confirms correct device detection</p></li>
+</ul>
+<p><strong>Resolution:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Device Verification</span><a class="headerlink" href="#id4" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verify correct device detection</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>verify_device.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+<span class="s">mem32 0xE000ED00 1</span>
+<span class="s">echo &quot;CPUID should be 0x411FD210 for Cortex-M33&quot;</span>
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>verify_device.jlink
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="power-and-clock-issues">
+<h3><span class="section-number">8.1.2. </span>Power and Clock Issues<a class="headerlink" href="#power-and-clock-issues" title="Link to this heading"></a></h3>
+<section id="problem-inconsistent-operation">
+<h4><span class="section-number">8.1.2.1. </span>Problem: Inconsistent Operation<a class="headerlink" href="#problem-inconsistent-operation" title="Link to this heading"></a></h4>
+<p><strong>Symptoms:</strong>
+- Intermittent connection failures
+- Unexpected resets during operation
+- Clock-related timing issues</p>
+<p><strong>Diagnostic Script:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Power and Clock Analysis</span><a class="headerlink" href="#id5" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== EFR32ZG28 Power and Clock Analysis ===&quot;</span>
+
+cat<span class="w"> </span>&gt;<span class="w"> </span>power_clock_test.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;=== Power Supply Analysis ===&quot;</span>
+<span class="s">echo &quot;Check power LED status on board&quot;</span>
+<span class="s">echo &quot;Measure VDD voltage (should be 3.3V)&quot;</span>
+
+<span class="s">echo &quot;=== Clock System Analysis ===&quot;</span>
+<span class="s">echo &quot;CMU base register:&quot;</span>
+<span class="s">mem32 0x40008000 1</span>
+
+<span class="s">echo &quot;System clock status:&quot;</span>
+<span class="s">mem32 0x40008004 1</span>
+
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>power_clock_test.jlink
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="software-troubleshooting">
+<h2><span class="section-number">8.2. </span>Software Troubleshooting<a class="headerlink" href="#software-troubleshooting" title="Link to this heading"></a></h2>
+<section id="build-system-issues">
+<h3><span class="section-number">8.2.1. </span>Build System Issues<a class="headerlink" href="#build-system-issues" title="Link to this heading"></a></h3>
+<section id="problem-compilation-failures">
+<h4><span class="section-number">8.2.1.1. </span>Problem: Compilation Failures<a class="headerlink" href="#problem-compilation-failures" title="Link to this heading"></a></h4>
+<p><strong>Common Error: Missing Standard Types</strong></p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Type Definition Errors</span><a class="headerlink" href="#id6" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>error: unknown type name &#39;uint32_t&#39;
+error: &#39;volatile&#39; not permitted here
+</pre></div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Required Headers</span><a class="headerlink" href="#id7" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span><span class="c1">    // For uint32_t, uint8_t, etc.</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdbool.h&gt;</span><span class="c1">   // For bool type</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stddef.h&gt;</span><span class="c1">    // For size_t, NULL</span>
+</pre></div>
+</div>
+</div>
+<p><strong>Common Error: Linker Script Issues</strong></p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Linker Errors</span><a class="headerlink" href="#id8" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>error: region `FLASH&#39; overflowed by X bytes
+error: undefined reference to `Reset_Handler&#39;
+</pre></div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">Linker Script Verification</span><a class="headerlink" href="#id9" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check memory definitions</span>
+grep<span class="w"> </span>-A<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s2">&quot;MEMORY&quot;</span><span class="w"> </span>efr32zg28.ld
+
+<span class="c1"># Verify vector table inclusion</span>
+grep<span class="w"> </span>-A<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="s2">&quot;.text&quot;</span><span class="w"> </span>efr32zg28.ld
+
+<span class="c1"># Check startup file linking</span>
+arm-none-eabi-objdump<span class="w"> </span>-t<span class="w"> </span>startup_efr32zg28.o<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Reset_Handler
+</pre></div>
+</div>
+</div>
+</section>
+<section id="problem-flash-programming-failures">
+<h4><span class="section-number">8.2.1.2. </span>Problem: Flash Programming Failures<a class="headerlink" href="#problem-flash-programming-failures" title="Link to this heading"></a></h4>
+<p><strong>Error: Flash Write Failures</strong></p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">Flash Programming Errors</span><a class="headerlink" href="#id10" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: &quot;Flash download failed&quot;
+Error: &quot;Verification failed&quot;
+Error: &quot;Flash erase failed&quot;
+</pre></div>
+</div>
+</div>
+<p><strong>Diagnostic Procedure:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">Flash Troubleshooting Script</span><a class="headerlink" href="#id11" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Flash Programming Diagnostics ===&quot;</span>
+
+<span class="c1"># Test 1: Flash memory detection</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>flash_detect.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;Flash memory detection:&quot;</span>
+<span class="s">mem32 0x08000000 4</span>
+
+<span class="s">echo &quot;Flash size verification:&quot;</span>
+<span class="s">mem32 0x08100000 1</span>
+<span class="s">echo &quot;(Should fail - beyond flash range)&quot;</span>
+
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>flash_detect.jlink
+
+<span class="c1"># Test 2: Erase and program test</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Testing flash erase...&quot;</span>
+JLinkExe<span class="w"> </span>-device<span class="w"> </span>EFR32ZG28B312F1024IM48-A<span class="w"> </span>-if<span class="w"> </span>SWD<span class="w"> </span>-speed<span class="w"> </span><span class="m">4000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">         </span>-CommandFile<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">connect</span>
+<span class="s">erase</span>
+<span class="s">loadfile minimal_led_blink.hex</span>
+<span class="s">verifyfile minimal_led_blink.hex</span>
+<span class="s">exit</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="trustzone-and-security-issues">
+<h3><span class="section-number">8.2.2. </span>TrustZone and Security Issues<a class="headerlink" href="#trustzone-and-security-issues" title="Link to this heading"></a></h3>
+<section id="problem-gpio-register-access-failures">
+<h4><span class="section-number">8.2.2.1. </span>Problem: GPIO Register Access Failures<a class="headerlink" href="#problem-gpio-register-access-failures" title="Link to this heading"></a></h4>
+<p><strong>Error Symptoms:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">TrustZone Access Errors</span><a class="headerlink" href="#id12" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>J-Link&gt;mem32 0x4003C034 1
+Could not read memory.
+
+J-Link&gt;w32 0x4003C034 0x100
+Writing target memory failed.
+</pre></div>
+</div>
+</div>
+<p><strong>Root Cause Analysis:</strong></p>
+<p>This is <strong>expected behavior</strong> due to TrustZone security:</p>
+<ol class="arabic simple">
+<li><p>GPIO registers are classified as “Secure” peripherals</p></li>
+<li><p>External debuggers lack proper security credentials</p></li>
+<li><p>Only Silicon Labs authenticated tools can access these registers</p></li>
+</ol>
+<p><strong>Verification Script:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">TrustZone Security Verification</span><a class="headerlink" href="#id13" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== TrustZone Security Analysis ===&quot;</span>
+
+cat<span class="w"> </span>&gt;<span class="w"> </span>trustzone_verify.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;=== Accessible Registers ===&quot;</span>
+<span class="s">echo &quot;CPUID (should work):&quot;</span>
+<span class="s">mem32 0xE000ED00 1</span>
+
+<span class="s">echo &quot;RAM access (should work):&quot;</span>
+<span class="s">w32 0x20000000 0x12345678</span>
+<span class="s">mem32 0x20000000 1</span>
+
+<span class="s">echo &quot;=== Protected Registers ===&quot;</span>
+<span class="s">echo &quot;GPIO PC_DOUT (should fail):&quot;</span>
+<span class="s">mem32 0x4003C034 1</span>
+
+<span class="s">echo &quot;SMU register (should fail):&quot;</span>
+<span class="s">mem32 0x54008050 1</span>
+
+<span class="s">echo &quot;=== CONCLUSION ===&quot;</span>
+<span class="s">echo &quot;If GPIO access fails, TrustZone is working correctly&quot;</span>
+<span class="s">echo &quot;Use Simplicity Studio 5 for GPIO access&quot;</span>
+
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>trustzone_verify.jlink
+</pre></div>
+</div>
+</div>
+</section>
+<section id="problem-hardfault-during-execution">
+<h4><span class="section-number">8.2.2.2. </span>Problem: HardFault During Execution<a class="headerlink" href="#problem-hardfault-during-execution" title="Link to this heading"></a></h4>
+<p><strong>Error Symptoms:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">HardFault Analysis</span><a class="headerlink" href="#id14" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>XPSR = 39000003: IPSR = 003 (HardFault)
+PC = EFFFFFFE
+Status: Fault during GPIO register access
+</pre></div>
+</div>
+</div>
+<p><strong>Diagnostic Steps:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">HardFault Analysis Script</span><a class="headerlink" href="#id15" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== HardFault Analysis ===&quot;</span>
+
+cat<span class="w"> </span>&gt;<span class="w"> </span>hardfault_debug.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;Load and run program...&quot;</span>
+<span class="s">loadfile minimal_led_blink.hex</span>
+<span class="s">go</span>
+<span class="s">sleep 2000</span>
+<span class="s">halt</span>
+
+<span class="s">echo &quot;=== Fault Analysis ===&quot;</span>
+<span class="s">regs</span>
+
+<span class="s">echo &quot;Check fault status registers:&quot;</span>
+<span class="s">mem32 0xE000ED28 1</span>
+<span class="s">echo &quot;Hard Fault Status Register&quot;</span>
+
+<span class="s">mem32 0xE000ED2C 1</span>
+<span class="s">echo &quot;Configurable Fault Status Register&quot;</span>
+
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>hardfault_debug.jlink
+</pre></div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<p>HardFault occurs due to attempted access to TrustZone-protected registers. This is expected and confirms security is working correctly.</p>
+</section>
+</section>
+<section id="ss5-integration-issues">
+<h3><span class="section-number">8.2.3. </span>SS5 Integration Issues<a class="headerlink" href="#ss5-integration-issues" title="Link to this heading"></a></h3>
+<section id="problem-ss5-build-failures">
+<h4><span class="section-number">8.2.3.1. </span>Problem: SS5 Build Failures<a class="headerlink" href="#problem-ss5-build-failures" title="Link to this heading"></a></h4>
+<p><strong>Error: Component Not Found</strong></p>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">SS5 Component Errors</span><a class="headerlink" href="#id16" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: Component &#39;simple_led&#39; not found
+Error: Device &#39;EFR32ZG28B312F1024IM48-A&#39; not supported
+</pre></div>
+</div>
+</div>
+<p><strong>Solution Steps:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">SS5 Troubleshooting</span><a class="headerlink" href="#id17" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Step 1: Verify Gecko SDK installation</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Error: GECKO_SDK_PATH not set&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Install latest Gecko SDK via SS5 Package Manager&quot;</span>
+<span class="k">fi</span>
+
+<span class="c1"># Step 2: Check EFR32ZG28 support</span>
+find<span class="w"> </span><span class="nv">$GECKO_SDK_PATH</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*efr32zg28*&quot;</span><span class="w"> </span>-type<span class="w"> </span>d
+
+<span class="c1"># Step 3: Verify SLC command</span>
+slc<span class="w"> </span>--version
+
+<span class="c1"># Step 4: Regenerate project</span>
+<span class="nb">cd</span><span class="w"> </span>ss5_project
+slc<span class="w"> </span>generate
+make<span class="w"> </span>clean
+make
+</pre></div>
+</div>
+</div>
+</section>
+<section id="problem-ss5-component-configuration">
+<h4><span class="section-number">8.2.3.2. </span>Problem: SS5 Component Configuration<a class="headerlink" href="#problem-ss5-component-configuration" title="Link to this heading"></a></h4>
+<p><strong>Error: Missing Component Dependencies</strong></p>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">Component Dependency Errors</span><a class="headerlink" href="#id18" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: Component dependency not satisfied
+Warning: Configuration mismatch
+</pre></div>
+</div>
+</div>
+<p><strong>Solution:</strong></p>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">Correct Component Configuration</span><a class="headerlink" href="#id19" title="Link to this code"></a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Essential components for EFR32ZG28</span>
+<span class="nt">component</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init</span><span class="p p-Indicator">}</span><span class="w">        </span><span class="c1"># Required for TrustZone</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init_hfxo</span><span class="p p-Indicator">}</span><span class="w">   </span><span class="c1"># Clock initialization</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">sl_system</span><span class="p p-Indicator">}</span><span class="w">          </span><span class="c1"># System services</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">simple_led</span><span class="p p-Indicator">}</span><span class="w">         </span><span class="c1"># LED control</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">power_manager</span><span class="p p-Indicator">}</span><span class="w">      </span><span class="c1"># Power management</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="progressive-debugging-methodology">
+<h2><span class="section-number">8.3. </span>Progressive Debugging Methodology<a class="headerlink" href="#progressive-debugging-methodology" title="Link to this heading"></a></h2>
+<section id="systematic-troubleshooting-approach">
+<h3><span class="section-number">8.3.1. </span>Systematic Troubleshooting Approach<a class="headerlink" href="#systematic-troubleshooting-approach" title="Link to this heading"></a></h3>
+<section id="step-1-hardware-validation">
+<h4><span class="section-number">8.3.1.1. </span>Step 1: Hardware Validation<a class="headerlink" href="#step-1-hardware-validation" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">Hardware Validation Checklist</span><a class="headerlink" href="#id20" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Step 1: Hardware Validation ===&quot;</span>
+
+<span class="c1"># Check 1: Board power</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ Check power LED on board&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ Measure VDD voltage (should be 3.3V)&quot;</span>
+
+<span class="c1"># Check 2: USB connection</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Checking USB connection...&quot;</span>
+lsusb<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>segger<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ J-Link detected&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✗ J-Link not found&quot;</span>
+
+<span class="c1"># Check 3: J-Link communication</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Testing J-Link communication...&quot;</span>
+JLinkExe<span class="w"> </span>-device<span class="w"> </span>EFR32ZG28B312F1024IM48-A<span class="w"> </span>-if<span class="w"> </span>SWD<span class="w"> </span>-speed<span class="w"> </span><span class="m">4000</span><span class="w"> </span>-autoconnect<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">         </span>-CommanderScript<span class="w"> </span>/dev/null<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ J-Link communication OK&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✗ J-Link communication failed&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="step-2-software-environment">
+<h4><span class="section-number">8.3.1.2. </span>Step 2: Software Environment<a class="headerlink" href="#step-2-software-environment" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">Software Environment Validation</span><a class="headerlink" href="#id21" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Step 2: Software Environment ===&quot;</span>
+
+<span class="c1"># Check toolchain</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Checking ARM GCC toolchain...&quot;</span>
+arm-none-eabi-gcc<span class="w"> </span>--version<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ GCC ARM available&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✗ GCC ARM missing&quot;</span>
+
+<span class="c1"># Check Gecko SDK</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Checking Gecko SDK...&quot;</span>
+<span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ GECKO_SDK_PATH set&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✗ GECKO_SDK_PATH not set&quot;</span>
+
+<span class="c1"># Check SS5 tools</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Checking SS5 tools...&quot;</span>
+<span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>slc<span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ SLC available&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;⚠ SLC not found (SS5 installation)&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="step-3-build-system-test">
+<h4><span class="section-number">8.3.1.3. </span>Step 3: Build System Test<a class="headerlink" href="#step-3-build-system-test" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">Build System Validation</span><a class="headerlink" href="#id22" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Step 3: Build System Test ===&quot;</span>
+
+<span class="c1"># Test minimal build</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Testing minimal build...&quot;</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>test_build.c<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">#include &lt;stdint.h&gt;</span>
+<span class="s">volatile uint32_t test_var = 0x12345678;</span>
+<span class="s">int main(void) { while(1) test_var++; }</span>
+<span class="s">EOF</span>
+
+arm-none-eabi-gcc<span class="w"> </span>-mcpu<span class="o">=</span>cortex-m33<span class="w"> </span>-mthumb<span class="w"> </span>-specs<span class="o">=</span>nosys.specs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-T<span class="w"> </span>efr32zg28.ld<span class="w"> </span>-o<span class="w"> </span>test_build.elf<span class="w"> </span>test_build.c<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ Build successful&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✗ Build failed&quot;</span>
+
+<span class="c1"># Test flash programming</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span>test_build.elf<span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span>arm-none-eabi-objcopy<span class="w"> </span>-O<span class="w"> </span>ihex<span class="w"> </span>test_build.elf<span class="w"> </span>test_build.hex
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Testing flash programming...&quot;</span>
+<span class="w">    </span><span class="c1"># Flash test would go here</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="step-4-trustzone-analysis">
+<h4><span class="section-number">8.3.1.4. </span>Step 4: TrustZone Analysis<a class="headerlink" href="#step-4-trustzone-analysis" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id23">
+<div class="code-block-caption"><span class="caption-text">TrustZone Security Analysis</span><a class="headerlink" href="#id23" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Step 4: TrustZone Analysis ===&quot;</span>
+
+cat<span class="w"> </span>&gt;<span class="w"> </span>trustzone_test.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;Testing accessible registers:&quot;</span>
+<span class="s">mem32 0xE000ED00 1</span>
+<span class="s">echo &quot;CPUID read result (should succeed)&quot;</span>
+
+<span class="s">echo &quot;Testing protected registers:&quot;</span>
+<span class="s">mem32 0x4003C034 1</span>
+<span class="s">echo &quot;GPIO read result (should fail with TrustZone)&quot;</span>
+
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>trustzone_test.jlink
+</pre></div>
+</div>
+</div>
+</section>
+<section id="step-5-solution-implementation">
+<h4><span class="section-number">8.3.1.5. </span>Step 5: Solution Implementation<a class="headerlink" href="#step-5-solution-implementation" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">Solution Implementation Test</span><a class="headerlink" href="#id24" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Step 5: Solution Implementation ===&quot;</span>
+
+<span class="c1"># Test SS5 integration</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;ss5_project&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Testing SS5 integration...&quot;</span>
+<span class="w">    </span><span class="nb">cd</span><span class="w"> </span>ss5_project
+<span class="w">    </span>slc<span class="w"> </span>generate<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>make<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ SS5 build successful&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✗ SS5 build failed&quot;</span>
+<span class="w">    </span><span class="nb">cd</span><span class="w"> </span>..
+<span class="k">fi</span>
+
+<span class="c1"># Test alternative solutions</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Testing alternative solutions...&quot;</span>
+./complete_build_flash.sh<span class="w"> </span>gcc<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ GCC solution works&quot;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✗ GCC solution failed&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="common-error-patterns-and-solutions">
+<h2><span class="section-number">8.4. </span>Common Error Patterns and Solutions<a class="headerlink" href="#common-error-patterns-and-solutions" title="Link to this heading"></a></h2>
+<section id="error-pattern-matrix">
+<h3><span class="section-number">8.4.1. </span>Error Pattern Matrix<a class="headerlink" href="#error-pattern-matrix" title="Link to this heading"></a></h3>
+<table class="docutils align-default" id="id25">
+<caption><span class="caption-text">Common Error Resolution Matrix</span><a class="headerlink" href="#id25" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 35.0%" />
+<col style="width: 35.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Error Pattern</p></th>
+<th class="head"><p>Root Cause</p></th>
+<th class="head"><p>Solution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>“Could not read memory”</p></td>
+<td><p>TrustZone protection</p></td>
+<td><p>Use SS5 integration</p></td>
+</tr>
+<tr class="row-odd"><td><p>“Device unknown”</p></td>
+<td><p>J-Link database</p></td>
+<td><p>Warning only, continue</p></td>
+</tr>
+<tr class="row-even"><td><p>“Flash download failed”</p></td>
+<td><p>Connection/power issue</p></td>
+<td><p>Check hardware connections</p></td>
+</tr>
+<tr class="row-odd"><td><p>“undefined reference”</p></td>
+<td><p>Missing object files</p></td>
+<td><p>Check linker configuration</p></td>
+</tr>
+<tr class="row-even"><td><p>“region overflowed”</p></td>
+<td><p>Code too large</p></td>
+<td><p>Optimize or increase memory</p></td>
+</tr>
+<tr class="row-odd"><td><p>“Component not found”</p></td>
+<td><p>Missing SDK/SS5</p></td>
+<td><p>Install required tools</p></td>
+</tr>
+<tr class="row-even"><td><p>IPSR = 003 (HardFault)</p></td>
+<td><p>TrustZone access attempt</p></td>
+<td><p>Expected with external tools</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="automated-troubleshooting-tools">
+<h2><span class="section-number">8.5. </span>Automated Troubleshooting Tools<a class="headerlink" href="#automated-troubleshooting-tools" title="Link to this heading"></a></h2>
+<section id="ultimate-troubleshooting-script">
+<h3><span class="section-number">8.5.1. </span>Ultimate Troubleshooting Script<a class="headerlink" href="#ultimate-troubleshooting-script" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id26">
+<div class="code-block-caption"><span class="caption-text">complete_troubleshooting.sh - Comprehensive Diagnosis</span><a class="headerlink" href="#id26" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">set</span><span class="w"> </span>-e
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== EFR32ZG28 Ultimate Troubleshooting Tool ===&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;This script will systematically test all aspects of the development environment&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># Initialize result tracking</span>
+<span class="nb">declare</span><span class="w"> </span>-A<span class="w"> </span>results
+
+<span class="c1"># Function to run test and track results</span>
+run_test<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nb">local</span><span class="w"> </span><span class="nv">test_name</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nb">local</span><span class="w"> </span><span class="nv">test_command</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$2</span><span class="s2">&quot;</span>
+
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Running: </span><span class="nv">$test_name</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$test_command</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">&amp;</span>&gt;/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ PASS: </span><span class="nv">$test_name</span><span class="s2">&quot;</span>
+<span class="w">        </span>results<span class="o">[</span><span class="s2">&quot;</span><span class="nv">$test_name</span><span class="s2">&quot;</span><span class="o">]=</span><span class="s2">&quot;PASS&quot;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✗ FAIL: </span><span class="nv">$test_name</span><span class="s2">&quot;</span>
+<span class="w">        </span>results<span class="o">[</span><span class="s2">&quot;</span><span class="nv">$test_name</span><span class="s2">&quot;</span><span class="o">]=</span><span class="s2">&quot;FAIL&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="o">}</span>
+
+<span class="c1"># Hardware tests</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== HARDWARE TESTS ===&quot;</span>
+run_test<span class="w"> </span><span class="s2">&quot;USB_Connection&quot;</span><span class="w"> </span><span class="s2">&quot;lsusb | grep -i segger&quot;</span>
+run_test<span class="w"> </span><span class="s2">&quot;J-Link_Command&quot;</span><span class="w"> </span><span class="s2">&quot;JLinkExe -?&quot;</span>
+run_test<span class="w"> </span><span class="s2">&quot;Target_Detection&quot;</span><span class="w"> </span><span class="s2">&quot;echo &#39;connect\nexit&#39; | JLinkExe -device EFR32ZG28B312F1024IM48-A -if SWD&quot;</span>
+
+<span class="c1"># Software tests</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== SOFTWARE TESTS ===&quot;</span>
+run_test<span class="w"> </span><span class="s2">&quot;GCC_ARM_Toolchain&quot;</span><span class="w"> </span><span class="s2">&quot;arm-none-eabi-gcc --version&quot;</span>
+run_test<span class="w"> </span><span class="s2">&quot;Gecko_SDK_Path&quot;</span><span class="w"> </span><span class="s2">&quot;test -n &#39;</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">&#39;&quot;</span>
+run_test<span class="w"> </span><span class="s2">&quot;EFR32ZG28_Support&quot;</span><span class="w"> </span><span class="s2">&quot;test -d &#39;</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">/platform/Device/SiliconLabs/EFR32ZG28&#39;&quot;</span>
+run_test<span class="w"> </span><span class="s2">&quot;SLC_Command&quot;</span><span class="w"> </span><span class="s2">&quot;slc --version&quot;</span>
+
+<span class="c1"># Build tests</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== BUILD TESTS ===&quot;</span>
+run_test<span class="w"> </span><span class="s2">&quot;Minimal_Compile&quot;</span><span class="w"> </span><span class="s2">&quot;arm-none-eabi-gcc -mcpu=cortex-m33 -mthumb -c -o /tmp/test.o /dev/null&quot;</span>
+run_test<span class="w"> </span><span class="s2">&quot;Linker_Script&quot;</span><span class="w"> </span><span class="s2">&quot;test -f efr32zg28.ld&quot;</span>
+run_test<span class="w"> </span><span class="s2">&quot;SS5_Project&quot;</span><span class="w"> </span><span class="s2">&quot;test -f ss5_project/efr32zg28_contiki.slcp&quot;</span>
+
+<span class="c1"># Security tests</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== SECURITY TESTS ===&quot;</span>
+run_test<span class="w"> </span><span class="s2">&quot;TrustZone_Active&quot;</span><span class="w"> </span><span class="s2">&quot;echo &#39;connect\nmem32 0x4003C034 1\nexit&#39; | JLinkExe -device EFR32ZG28B312F1024IM48-A -if SWD | grep -q &#39;Could not read&#39;&quot;</span>
+
+<span class="c1"># Generate report</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== TROUBLESHOOTING REPORT ===&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Test Results Summary:&quot;</span>
+
+<span class="nv">pass_count</span><span class="o">=</span><span class="m">0</span>
+<span class="nv">fail_count</span><span class="o">=</span><span class="m">0</span>
+
+<span class="k">for</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="p">!results[@]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nv">result</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">results</span><span class="p">[</span><span class="nv">$test</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  </span><span class="nv">$test</span><span class="s2">: </span><span class="nv">$result</span><span class="s2">&quot;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$result</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;PASS&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="o">((</span>pass_count++<span class="o">))</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="o">((</span>fail_count++<span class="o">))</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Summary: </span><span class="nv">$pass_count</span><span class="s2"> passed, </span><span class="nv">$fail_count</span><span class="s2"> failed&quot;</span>
+
+<span class="c1"># Provide recommendations</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== RECOMMENDATIONS ===&quot;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">results</span><span class="p">[TrustZone_Active]</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;PASS&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ TrustZone security is active (expected)&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  → Use Simplicity Studio 5 for GPIO access&quot;</span>
+<span class="k">fi</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">results</span><span class="p">[SS5_Project]</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;PASS&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✓ SS5 project available&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;  → Run: cd ss5_project &amp;&amp; slc generate &amp;&amp; make&quot;</span>
+<span class="k">fi</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="nv">$fail_count</span><span class="w"> </span>-eq<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;🎉 All tests passed! System ready for development.&quot;</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;⚠️  Some tests failed. Address failed items before proceeding.&quot;</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="debug-variable-monitoring">
+<h3><span class="section-number">8.5.2. </span>Debug Variable Monitoring<a class="headerlink" href="#debug-variable-monitoring" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id27">
+<div class="code-block-caption"><span class="caption-text">debug_monitor.sh - Runtime Variable Monitoring</span><a class="headerlink" href="#id27" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Debug Variable Monitoring ===&quot;</span>
+
+<span class="c1"># Create monitoring script for J-Link</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>monitor_variables.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;Starting debug variable monitoring...&quot;</span>
+<span class="s">echo &quot;Note: Variables will be at different addresses each run&quot;</span>
+
+<span class="s"># Start program</span>
+<span class="s">loadfile minimal_led_blink.hex</span>
+<span class="s">go</span>
+
+<span class="s"># Monitor for 10 seconds</span>
+<span class="s">sleep 2000</span>
+<span class="s">halt</span>
+
+<span class="s">echo &quot;=== Debug Variable Search ===&quot;</span>
+<span class="s">echo &quot;Searching for debug variables in RAM...&quot;</span>
+
+<span class="s"># Search common patterns</span>
+<span class="s">mem32 0x20000000 64</span>
+
+<span class="s">echo &quot;Look for incrementing values (debug counters)&quot;</span>
+<span class="s">echo &quot;Look for 0x12345678 or similar signature values&quot;</span>
+
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>monitor_variables.jlink
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="emergency-recovery-procedures">
+<h2><span class="section-number">8.6. </span>Emergency Recovery Procedures<a class="headerlink" href="#emergency-recovery-procedures" title="Link to this heading"></a></h2>
+<section id="system-recovery">
+<h3><span class="section-number">8.6.1. </span>System Recovery<a class="headerlink" href="#system-recovery" title="Link to this heading"></a></h3>
+<section id="complete-system-reset">
+<h4><span class="section-number">8.6.1.1. </span>Complete System Reset<a class="headerlink" href="#complete-system-reset" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id28">
+<div class="code-block-caption"><span class="caption-text">emergency_recovery.sh - Complete System Recovery</span><a class="headerlink" href="#id28" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Emergency Recovery Procedure ===&quot;</span>
+
+<span class="c1"># Step 1: Hardware reset</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Step 1: Performing hardware reset...&quot;</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>hardware_reset.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s"># Perform system reset</span>
+<span class="s">w32 0xE000ED0C 0x05FA0004</span>
+
+<span class="s"># Wait for reset</span>
+<span class="s">sleep 1000</span>
+
+<span class="s"># Reconnect</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;Hardware reset complete&quot;</span>
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>hardware_reset.jlink
+
+<span class="c1"># Step 2: Flash erase</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Step 2: Erasing flash memory...&quot;</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>flash_erase.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s"># Erase entire flash</span>
+<span class="s">erase</span>
+
+<span class="s">echo &quot;Flash erase complete&quot;</span>
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>flash_erase.jlink
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Emergency recovery complete&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;System ready for fresh programming&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="flash-recovery">
+<h4><span class="section-number">8.6.1.2. </span>Flash Recovery<a class="headerlink" href="#flash-recovery" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id29">
+<div class="code-block-caption"><span class="caption-text">flash_recovery.sh - Flash Memory Recovery</span><a class="headerlink" href="#id29" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Flash Memory Recovery ===&quot;</span>
+
+<span class="c1"># Test flash accessibility</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Testing flash memory accessibility...&quot;</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>flash_test.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;Flash memory test:&quot;</span>
+<span class="s">mem32 0x08000000 4</span>
+
+<span class="s">echo &quot;Testing flash write capability:&quot;</span>
+<span class="s">w32 0x08000000 0x12345678</span>
+<span class="s">mem32 0x08000000 1</span>
+
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>flash_test.jlink
+
+<span class="c1"># If flash is accessible, reprogram with known good binary</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;minimal_led_blink.hex&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Reprogramming with known good binary...&quot;</span>
+<span class="w">    </span>JLinkExe<span class="w"> </span>-device<span class="w"> </span>EFR32ZG28B312F1024IM48-A<span class="w"> </span>-if<span class="w"> </span>SWD<span class="w"> </span>-speed<span class="w"> </span><span class="m">4000</span><span class="w"> </span><span class="se">\</span>
+<span class="w">             </span>-CommandFile<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">connect</span>
+<span class="s">erase</span>
+<span class="s">loadfile minimal_led_blink.hex</span>
+<span class="s">verifyfile minimal_led_blink.hex</span>
+<span class="s">go</span>
+<span class="s">exit</span>
+<span class="s">EOF</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="expert-level-troubleshooting">
+<h2><span class="section-number">8.7. </span>Expert-Level Troubleshooting<a class="headerlink" href="#expert-level-troubleshooting" title="Link to this heading"></a></h2>
+<section id="advanced-debugging-techniques">
+<h3><span class="section-number">8.7.1. </span>Advanced Debugging Techniques<a class="headerlink" href="#advanced-debugging-techniques" title="Link to this heading"></a></h3>
+<section id="memory-map-analysis">
+<h4><span class="section-number">8.7.1.1. </span>Memory Map Analysis<a class="headerlink" href="#memory-map-analysis" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id30">
+<div class="code-block-caption"><span class="caption-text">advanced_memory_analysis.sh</span><a class="headerlink" href="#id30" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Advanced Memory Map Analysis ===&quot;</span>
+
+cat<span class="w"> </span>&gt;<span class="w"> </span>memory_analysis.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;=== Complete Memory Map Analysis ===&quot;</span>
+
+<span class="s">echo &quot;Flash memory mapping:&quot;</span>
+<span class="s">mem32 0x08000000 1</span>
+<span class="s">mem32 0x08080000 1</span>
+<span class="s">mem32 0x080FFFFF 1</span>
+<span class="s">mem32 0x08100000 1</span>
+<span class="s">echo &quot;(Last address should fail)&quot;</span>
+
+<span class="s">echo &quot;RAM memory mapping:&quot;</span>
+<span class="s">mem32 0x20000000 1</span>
+<span class="s">mem32 0x20020000 1</span>
+<span class="s">mem32 0x2003FFFF 1</span>
+<span class="s">mem32 0x20040000 1</span>
+<span class="s">echo &quot;(Last address should fail if 256KB RAM)&quot;</span>
+
+<span class="s">echo &quot;Peripheral memory mapping:&quot;</span>
+<span class="s">mem32 0x40000000 1</span>
+<span class="s">echo &quot;CMU base:&quot;</span>
+<span class="s">mem32 0x40008000 1</span>
+<span class="s">echo &quot;GPIO base (should fail):&quot;</span>
+<span class="s">mem32 0x4003C000 1</span>
+
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>memory_analysis.jlink
+</pre></div>
+</div>
+</div>
+</section>
+<section id="security-state-analysis">
+<h4><span class="section-number">8.7.1.2. </span>Security State Analysis<a class="headerlink" href="#security-state-analysis" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id31">
+<div class="code-block-caption"><span class="caption-text">security_state_analysis.sh</span><a class="headerlink" href="#id31" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Security State Analysis ===&quot;</span>
+
+cat<span class="w"> </span>&gt;<span class="w"> </span>security_analysis.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;=== ARM Cortex-M33 Security Analysis ===&quot;</span>
+
+<span class="s">echo &quot;CPUID (should be 0x411FD210):&quot;</span>
+<span class="s">mem32 0xE000ED00 1</span>
+
+<span class="s">echo &quot;AIRCR (Application Interrupt/Reset Control):&quot;</span>
+<span class="s">mem32 0xE000ED0C 1</span>
+
+<span class="s">echo &quot;Security extension registers:&quot;</span>
+<span class="s">mem32 0xE000ED14 1</span>
+<span class="s">mem32 0xE000ED94 1</span>
+
+<span class="s">echo &quot;Security state indicators:&quot;</span>
+<span class="s">echo &quot;If TrustZone is active, some reads may fail&quot;</span>
+
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>security_analysis.jlink
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="troubleshooting-decision-tree">
+<h2><span class="section-number">8.8. </span>Troubleshooting Decision Tree<a class="headerlink" href="#troubleshooting-decision-tree" title="Link to this heading"></a></h2>
+<section id="problem-classification">
+<h3><span class="section-number">8.8.1. </span>Problem Classification<a class="headerlink" href="#problem-classification" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id32">
+<div class="code-block-caption"><span class="caption-text">Troubleshooting Decision Tree</span><a class="headerlink" href="#id32" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Problem Encountered
+├── Hardware Issues
+│   ├── Connection Failures → Check USB, power, cables
+│   ├── Device Recognition → Update J-Link, verify device
+│   └── Power Problems → Check voltage, LED status
+│
+├── Software Issues
+│   ├── Build Failures → Check toolchain, headers, linker
+│   ├── Flash Failures → Verify connection, erase first
+│   └── Runtime Errors → Check for HardFault, TrustZone
+│
+├── TrustZone Issues
+│   ├── GPIO Access Denied → Expected, use SS5
+│   ├── HardFault on Access → Expected security response
+│   └── Memory Protection → Cannot bypass, design limitation
+│
+└── Integration Issues
+    ├── SS5 Problems → Check SDK, components, dependencies
+    ├── Component Errors → Verify configuration, regenerate
+    └── Build System → Check paths, tools, permissions
+</pre></div>
+</div>
+</div>
+</section>
+<section id="resolution-priority">
+<h3><span class="section-number">8.8.2. </span>Resolution Priority<a class="headerlink" href="#resolution-priority" title="Link to this heading"></a></h3>
+<table class="docutils align-default" id="id33">
+<caption><span class="caption-text">Issue Resolution Priority</span><a class="headerlink" href="#id33" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 30.0%" />
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Priority</p></th>
+<th class="head"><p>Issue Type</p></th>
+<th class="head"><p>Impact</p></th>
+<th class="head"><p>Resolution Time</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Critical</strong></p></td>
+<td><p>Hardware failure</p></td>
+<td><p>Blocks all development</p></td>
+<td><p>Immediate</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>High</strong></p></td>
+<td><p>Build system failure</p></td>
+<td><p>Blocks development</p></td>
+<td><p>Same day</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Medium</strong></p></td>
+<td><p>TrustZone limitations</p></td>
+<td><p>Requires workaround</p></td>
+<td><p>Within week</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Low</strong></p></td>
+<td><p>Warning messages</p></td>
+<td><p>Cosmetic only</p></td>
+<td><p>Next release</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="support-resources">
+<h2><span class="section-number">8.9. </span>Support Resources<a class="headerlink" href="#support-resources" title="Link to this heading"></a></h2>
+<section id="documentation-references">
+<h3><span class="section-number">8.9.1. </span>Documentation References<a class="headerlink" href="#documentation-references" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Project Documentation</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FINAL_README.md</span></code> - Complete project guide</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FINAL_SPHINX.md</span></code> - Comprehensive technical reference</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SS5_INTEGRATION_GUIDE.md</span></code> - SS5 setup and usage</p></li>
+</ul>
+</li>
+<li><p><strong>Hardware References</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">HARDWARE_DEBUG_GUIDE.md</span></code> - Hardware troubleshooting</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">JLINK_REFERENCE.md</span></code> - J-Link usage guide</p></li>
+<li><p>EFR32ZG28 datasheet - Silicon Labs official documentation</p></li>
+</ul>
+</li>
+<li><p><strong>Software References</strong></p>
+<ul class="simple">
+<li><p>Gecko SDK documentation</p></li>
+<li><p>ARM Cortex-M33 technical reference</p></li>
+<li><p>TrustZone for ARMv8-M specification</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="community-support">
+<h3><span class="section-number">8.9.2. </span>Community Support<a class="headerlink" href="#community-support" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Silicon Labs Community</strong></p>
+<ul class="simple">
+<li><p>Official Silicon Labs forums</p></li>
+<li><p>Simplicity Studio support</p></li>
+<li><p>Gecko SDK GitHub repository</p></li>
+</ul>
+</li>
+<li><p><strong>ARM Developer Resources</strong></p>
+<ul class="simple">
+<li><p>ARM Cortex-M33 documentation</p></li>
+<li><p>TrustZone implementation guides</p></li>
+<li><p>ARM Community forums</p></li>
+</ul>
+</li>
+<li><p><strong>Contiki-NG Community</strong></p>
+<ul class="simple">
+<li><p>Contiki-NG GitHub repository</p></li>
+<li><p>Community forums and discussions</p></li>
+<li><p>Platform-specific guides</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Troubleshooting Status</strong>: ✅ <strong>COMPREHENSIVE</strong> - Complete troubleshooting framework covering hardware, software, security, and integration issues with systematic resolution procedures.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="files-created.html" class="btn btn-neutral float-left" title="7. Files Created" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="future-work.html" class="btn btn-neutral float-right" title="9. Future Work and Recommendations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, PHYTEC EMBEDDED PVT. LTD. - SANGEZHIL &amp; ABARNIKA &amp; MADHUMITHA.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

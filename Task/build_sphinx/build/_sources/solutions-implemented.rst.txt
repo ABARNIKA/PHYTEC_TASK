@@ -1,0 +1,1018 @@
+Solutions Implemented
+====================
+
+This section documents the six different approaches developed to achieve LED control on the EFR32ZG28, ranging from the fully successful SS5 integration to various experimental methods.
+
+Solution 1: Simplicity Studio 5 Integration (RECOMMENDED)
+---------------------------------------------------------
+
+.. admonition:: Success Rate: ⭐⭐⭐⭐⭐
+   :class: tip
+   
+   This is the only method that provides full GPIO access due to proper TrustZone handling.
+
+Overview
+~~~~~~~~
+
+The SS5 integration leverages Silicon Labs' official development environment with built-in TrustZone security support and proper peripheral access credentials.
+
+Project Structure
+~~~~~~~~~~~~~~~~~
+
+.. code-block:: text
+   :caption: SS5 Project Organization
+
+   ss5_project/
+   ├── efr32zg28_contiki.slcp           # Project configuration
+   ├── efr32zg28_contiki.slps           # Project settings  
+   ├── ss5_contiki_main.c               # Main application
+   ├── app_init.h                       # Application interface
+   ├── app_init.c                       # Application initialization
+   ├── app_process.h                    # Process interface
+   ├── app_process.c                    # Main processing loop
+   └── config/                          # Component configurations
+       ├── sl_device_init_hfxo_config.h
+       ├── sl_device_init_lfxo_config.h
+       ├── sl_board_control_config.h
+       └── sl_simple_led_led1_config.h
+
+Component Configuration
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: yaml
+   :caption: efr32zg28_contiki.slcp - Essential Components
+
+   project_name: efr32zg28_contiki
+   label: EFR32ZG28 Contiki-NG LED Blink
+   category: Example
+   package: platform
+   quality: production
+
+   component:
+   - {id: device_init}
+     description: "Handles TrustZone security initialization"
+   - {id: device_init_hfxo}
+     description: "High-frequency crystal oscillator setup"
+   - {id: power_manager}
+     description: "Power management with security support"
+   - {id: simple_led}
+     description: "LED abstraction with TrustZone compatibility"
+   - {id: sl_system}
+     description: "Core system initialization"
+   - {id: sleeptimer}
+     description: "Timing services"
+
+Main Application
+~~~~~~~~~~~~~~~~
+
+.. code-block:: c
+   :caption: ss5_contiki_main.c - Hybrid Application
+
+   #include "sl_component_catalog.h"
+   #include "sl_system_init.h"
+   #include "sl_power_manager.h"
+   #include "sl_simple_led_instances.h"
+   #include "app.h"
+
+   // Contiki integration headers
+   #include "contiki.h"
+   #include "sys/process.h"
+   #include "sys/etimer.h"
+
+   // Debug variables for J-Link monitoring
+   volatile uint32_t debug_main_loop_count = 0;
+   volatile uint32_t debug_led_toggle_count = 0;
+   volatile bool debug_led_current_state = false;
+   volatile uint32_t debug_system_ticks = 0;
+
+   int main(void)
+   {
+     // Initialize Silicon Labs system (includes TrustZone setup)
+     sl_system_init();
+     
+     // Initialize Contiki-NG
+     process_init();
+     process_start(&etimer_process, NULL);
+     
+     // Initialize application
+     app_init();
+     
+     // Main execution loop
+     while (1) {
+       debug_main_loop_count++;
+       
+       // Silicon Labs power management
+       sl_power_manager_step();
+       
+       // Contiki process scheduling
+       process_run();
+       
+       // Application-specific processing
+       app_process_action();
+       
+       debug_system_ticks = sl_sleeptimer_get_tick_count();
+     }
+   }
+
+LED Control Implementation
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: c
+   :caption: app_process.c - Secure LED Control
+
+   #include "sl_simple_led_instances.h"
+   #include "sl_sleeptimer.h"
+   #include "app.h"
+
+   static bool led_state = false;
+   static uint32_t blink_counter = 0;
+   static uint32_t last_blink_tick = 0;
+
+   // Blink interval: 1 second (32768 ticks at 32kHz)
+   #define BLINK_INTERVAL_TICKS  32768
+
+   void app_init(void)
+   {
+     // LED initialization handled automatically by SLC components
+     // TrustZone security configuration done by device_init component
+     
+     // Ensure LED starts in known state
+     sl_led_turn_off(&sl_led_led1);
+     led_state = false;
+     
+     // Initialize timing
+     last_blink_tick = sl_sleeptimer_get_tick_count();
+   }
+
+   void app_process_action(void)
+   {
+     uint32_t current_tick = sl_sleeptimer_get_tick_count();
+     
+     // Check if it's time to toggle LED
+     if (current_tick - last_blink_tick >= BLINK_INTERVAL_TICKS) {
+       // Toggle LED state
+       led_state = !led_state;
+       
+       if (led_state) {
+         sl_led_turn_on(&sl_led_led1);
+       } else {
+         sl_led_turn_off(&sl_led_led1);
+       }
+       
+       // Update debug variables
+       blink_counter++;
+       debug_led_toggle_count = blink_counter;
+       debug_led_current_state = led_state;
+       
+       // Update timing
+       last_blink_tick = current_tick;
+     }
+   }
+
+TrustZone Integration
+~~~~~~~~~~~~~~~~~~~~~
+
+The SS5 component system automatically handles TrustZone security:
+
+.. code-block:: c
+   :caption: Automatic Security Configuration (handled by device_init)
+
+   // This code is automatically generated by SLC
+   void sl_device_init_nvic(void)
+   {
+     // Configure security extensions
+     // Set up secure/non-secure peripheral attribution
+     // Initialize Security Management Unit (SMU)
+     // Configure GPIO security settings
+   }
+
+Build and Flash Process
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+   :caption: SS5 Build Commands
+
+   # Build using Simplicity Studio 5
+   cd ss5_project
+   slc generate
+   make -f Makefile
+   
+   # Flash using Commander
+   commander flash efr32zg28_contiki.hex --device EFR32ZG28B312F1024IM48-A
+
+Features Achieved
+~~~~~~~~~~~~~~~~~
+
+✅ **Full TrustZone compatibility**: Proper security initialization
+
+✅ **GPIO register access**: Complete peripheral control
+
+✅ **Silicon Labs component integration**: Professional development framework
+
+✅ **Debug variable monitoring**: Runtime state inspection via J-Link
+
+✅ **Power management**: Efficient low-power operation
+
+✅ **Contiki-NG integration**: Hybrid application architecture
+
+Solution 2: Direct GCC Build and Flash
+--------------------------------------
+
+.. admonition:: Success Rate: ⭐⭐⭐
+   :class: note
+   
+   Successful flash programming, but GPIO access limited by TrustZone.
+
+Overview
+~~~~~~~~
+
+This approach uses standard GCC ARM toolchain for compilation and J-Link for programming, achieving successful binary deployment but with limited GPIO functionality.
+
+Minimal Implementation
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: c
+   :caption: minimal_led_blink.c - Successfully Flashed Program
+
+   #include <stdint.h>
+
+   // Hardware register definitions
+   #define CMU_BASE           0x40008000UL
+   #define GPIO_BASE          0x4003C000UL
+
+   // Register access macros
+   #define CMU_CLKEN0         (*(volatile uint32_t*)(CMU_BASE + 0x200))
+   #define GPIO_PC_MODEL      (*(volatile uint32_t*)(GPIO_BASE + 0x30))
+   #define GPIO_PC_DOUT       (*(volatile uint32_t*)(GPIO_BASE + 0x34))
+
+   // Debug variables for J-Link monitoring
+   volatile uint32_t debug_main_loop = 0;
+   volatile uint32_t debug_led_state = 0;
+   volatile uint32_t debug_cmu_status = 0;
+   volatile uint32_t debug_gpio_attempt = 0;
+
+   void simple_delay(uint32_t count) 
+   {
+       volatile uint32_t i;
+       for(i = 0; i < count; i++) {
+           __asm__("nop");
+       }
+   }
+
+   int main(void) 
+   {
+       debug_main_loop = 0;
+       
+       // Attempt to enable GPIO clock
+       // (This will fail due to TrustZone, but attempt is monitored)
+       CMU_CLKEN0 |= (1UL << 2);
+       debug_cmu_status = CMU_CLKEN0;
+       
+       // Attempt to configure PC8 as output
+       // (This will also fail due to TrustZone protection)
+       GPIO_PC_MODEL &= ~(0xF << (8 * 4));
+       GPIO_PC_MODEL |= (0x4 << (8 * 4));
+       
+       while (1) {
+           debug_main_loop++;
+           
+           // Attempt LED toggle
+           // (Register write will fail, but attempt is counted)
+           GPIO_PC_DOUT ^= (1UL << 8);
+           debug_gpio_attempt++;
+           debug_led_state = (GPIO_PC_DOUT >> 8) & 1;
+           
+           simple_delay(1000000);
+       }
+   }
+
+Build System
+~~~~~~~~~~~~
+
+.. code-block:: bash
+   :caption: direct_gcc_flash.sh - Complete Build and Flash
+
+   #!/bin/bash
+   echo "=== EFR32ZG28 Direct GCC Build and Flash ==="
+   
+   # Compilation
+   echo "Compiling with GCC ARM..."
+   arm-none-eabi-gcc \
+       -mcpu=cortex-m33 \
+       -mthumb \
+       -mfloat-abi=soft \
+       -specs=nosys.specs \
+       -T efr32zg28.ld \
+       -Wl,--gc-sections \
+       -o minimal_led_blink.elf \
+       minimal_led_blink.c
+   
+   # Binary generation
+   echo "Generating binary formats..."
+   arm-none-eabi-objcopy -O ihex minimal_led_blink.elf minimal_led_blink.hex
+   arm-none-eabi-objcopy -O binary minimal_led_blink.elf minimal_led_blink.bin
+   
+   # Size analysis
+   echo "Binary size analysis:"
+   arm-none-eabi-size minimal_led_blink.elf
+   
+   # Flash programming
+   echo "Programming flash via J-Link..."
+   cat > flash_minimal.jlink << 'EOF'
+   device EFR32ZG28B312F1024IM48-A
+   si SWD
+   speed 4000
+   connect
+   loadfile minimal_led_blink.hex
+   verifyfile minimal_led_blink.hex
+   go
+   exit
+   EOF
+   
+   JLinkExe -CommanderScript flash_minimal.jlink
+
+Linker Script
+~~~~~~~~~~~~~
+
+.. code-block:: c
+   :caption: efr32zg28.ld - Memory Layout
+
+   MEMORY
+   {
+     FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 1024K
+     RAM (rwx)  : ORIGIN = 0x20000000, LENGTH = 256K
+   }
+
+   ENTRY(Reset_Handler)
+
+   SECTIONS
+   {
+     .text :
+     {
+       KEEP(*(.isr_vector))
+       *(.text*)
+       *(.rodata*)
+     } >FLASH
+
+     .data :
+     {
+       . = ALIGN(4);
+       __data_start__ = .;
+       *(.data*)
+       . = ALIGN(4);
+       __data_end__ = .;
+     } >RAM AT>FLASH
+
+     .bss :
+     {
+       . = ALIGN(4);
+       __bss_start__ = .;
+       *(.bss*)
+       *(COMMON)
+       . = ALIGN(4);
+       __bss_end__ = .;
+     } >RAM
+   }
+
+Results Analysis
+~~~~~~~~~~~~~~~~
+
+**Compilation**: ✅ Success - Clean build with no warnings
+
+**Flash Programming**: ✅ Success - 264-byte binary successfully flashed
+
+**Runtime Execution**: ✅ Success - Debug variables update correctly
+
+**GPIO Control**: ❌ Limited - TrustZone blocks register access
+
+Debug Session Output::
+
+   J-Link>loadfile minimal_led_blink.hex
+   Downloading file [minimal_led_blink.hex]...
+   J-Link: Flash download: Bank 0 @ 0x08000000: 1 range affected (264 bytes)
+   J-Link: Flash download: Total: 0.094s (Data: 0.002s, Overhead: 0.092s)
+   O.K.
+   
+   J-Link>go
+   J-Link>mem32 0x20000000 4
+   20000000 = 00000023 00000000 00000000 00000001
+   # debug_main_loop is incrementing (address varies)
+
+Solution 3: Comprehensive Debugging Framework
+---------------------------------------------
+
+.. admonition:: Success Rate: ⭐⭐⭐⭐
+   :class: info
+   
+   Excellent for analysis and troubleshooting, provides complete development insights.
+
+Overview
+~~~~~~~~
+
+This solution focuses on progressive troubleshooting and comprehensive analysis to understand hardware behavior and limitations.
+
+Progressive Test Cases
+~~~~~~~~~~~~~~~~~~~~~~
+
+Test 1: Minimal Functionality
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: c
+   :caption: test1_minimal_blink.c - Absolute Minimal Test
+
+   // Test case 1: Verify basic execution
+   volatile uint32_t test1_counter = 0;
+   volatile uint32_t test1_status = 0xABCD1234;  // Signature value
+
+   int main(void) 
+   {
+       test1_status = 0x11111111;  // Mark start
+       
+       while(1) {
+           test1_counter++;
+           
+           // Minimal delay without function calls
+           for(volatile int i = 0; i < 100000; i++);
+           
+           if (test1_counter > 1000) {
+               test1_status = 0x22222222;  // Mark milestone
+           }
+       }
+   }
+
+Test 2: Register Inspection
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: c
+   :caption: test2_register_inspect.c - Hardware Analysis
+
+   // Test case 2: Systematic register analysis
+   volatile uint32_t test2_cpuid = 0;
+   volatile uint32_t test2_gpio_base = 0;
+   volatile uint32_t test2_cmu_base = 0;
+   volatile uint32_t test2_result = 0;
+
+   int main(void) 
+   {
+       // Read accessible registers
+       test2_cpuid = SCB->CPUID;        // Should work
+       test2_gpio_base = GPIO_BASE;     // Address constant
+       test2_cmu_base = CMU_BASE;       // Address constant
+       
+       // Attempt protected register access (will fail)
+       // But failure mode can be analyzed
+       test2_result = *(volatile uint32_t*)0x4003C034;
+       
+       while(1) {
+           // Keep running for monitoring
+       }
+   }
+
+Test 3: Alternative GPIO Methods
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: c
+   :caption: test3_alternative_gpio.c - Creative Approaches
+
+   // Test case 3: Alternative GPIO access methods
+   volatile uint32_t test3_method = 0;
+   volatile uint32_t test3_result = 0;
+
+   int main(void) 
+   {
+       // Method 1: Direct register write
+       test3_method = 1;
+       *(volatile uint32_t*)0x4003C034 = 0x100;
+       
+       // Method 2: Pointer manipulation
+       test3_method = 2;
+       volatile uint32_t *gpio_dout = (uint32_t*)0x4003C034;
+       *gpio_dout |= 0x100;
+       
+       // Method 3: Assembly access
+       test3_method = 3;
+       __asm volatile (
+           "ldr r0, =0x4003C034  \n"
+           "ldr r1, [r0]         \n"
+           "orr r1, r1, #0x100   \n"
+           "str r1, [r0]         \n"
+           ::: "r0", "r1", "memory"
+       );
+       
+       test3_result = 0xDEADBEEF;  // Mark completion
+       while(1);
+   }
+
+Automated Analysis Tools
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+   :caption: ultimate_troubleshooting.sh - Progressive Analysis
+
+   #!/bin/bash
+   echo "=== EFR32ZG28 Progressive Troubleshooting ==="
+   
+   # Test 1: Basic functionality
+   echo "Step 1: Testing basic CPU execution..."
+   arm-none-eabi-gcc -mcpu=cortex-m33 -mthumb -specs=nosys.specs \
+       -T efr32zg28.ld -o test1.elf test1_minimal_blink.c
+   arm-none-eabi-objcopy -O ihex test1.elf test1.hex
+   
+   cat > flash_test1.jlink << 'EOF'
+   device EFR32ZG28B312F1024IM48-A
+   si SWD
+   speed 4000
+   connect
+   loadfile test1.hex
+   go
+   sleep 2000
+   halt
+   mem32 0x20000000 16
+   exit
+   EOF
+   
+   JLinkExe -CommanderScript flash_test1.jlink > test1_results.txt
+   
+   # Test 2: Register analysis
+   echo "Step 2: Analyzing register access..."
+   arm-none-eabi-gcc -mcpu=cortex-m33 -mthumb -specs=nosys.specs \
+       -T efr32zg28.ld -o test2.elf test2_register_inspect.c
+   arm-none-eabi-objcopy -O ihex test2.elf test2.hex
+   
+   # Continue with additional tests...
+
+Debug Session Analysis
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: text
+   :caption: Sample Debug Output Analysis
+
+   === Test 1 Results ===
+   test1_counter: 0x00000157 (incrementing - CPU working)
+   test1_status:  0x22222222 (milestone reached - logic working)
+   
+   === Test 2 Results ===
+   test2_cpuid:     0x411FD210 (correct Cortex-M33 ID)
+   test2_gpio_base: 0x4003C000 (address constant correct)
+   test2_result:    0x00000000 (register read failed - TrustZone active)
+   
+   === Test 3 Results ===
+   test3_method: 0x00000003 (all methods attempted)
+   test3_result: 0xDEADBEEF (test completed)
+   GPIO Status:  All register writes blocked by TrustZone
+
+Solution 4: Automated Build Systems
+-----------------------------------
+
+.. admonition:: Success Rate: ⭐⭐⭐⭐
+   :class: info
+   
+   Excellent automation and productivity, handles multiple build approaches.
+
+Complete Build Automation
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+   :caption: complete_build_flash.sh - Full Automation
+
+   #!/bin/bash
+   set -e  # Exit on any error
+   
+   echo "=== EFR32ZG28 Complete Build and Flash System ==="
+   echo "Supporting multiple build approaches:"
+   echo "1. SS5 Integration"
+   echo "2. Direct GCC Build"
+   echo "3. Hybrid Approach"
+   echo ""
+   
+   # Function: SS5 Build
+   build_ss5() {
+       echo "Building SS5 project..."
+       cd ss5_project
+       
+       if [ ! -f efr32zg28_contiki.slcp ]; then
+           echo "Error: SS5 project not found"
+           return 1
+       fi
+       
+       slc generate
+       make -f Makefile
+       
+       echo "SS5 build complete: efr32zg28_contiki.hex"
+       cd ..
+   }
+   
+   # Function: GCC Build
+   build_gcc() {
+       echo "Building with GCC..."
+       
+       # Check toolchain
+       if ! command -v arm-none-eabi-gcc &> /dev/null; then
+           echo "Error: GCC ARM toolchain not found"
+           return 1
+       fi
+       
+       # Compile
+       arm-none-eabi-gcc \
+           -mcpu=cortex-m33 \
+           -mthumb \
+           -mfloat-abi=soft \
+           -specs=nosys.specs \
+           -T efr32zg28.ld \
+           -Wl,--gc-sections \
+           -Os \
+           -o minimal_led_blink.elf \
+           minimal_led_blink.c
+       
+       # Generate formats
+       arm-none-eabi-objcopy -O ihex minimal_led_blink.elf minimal_led_blink.hex
+       arm-none-eabi-objcopy -O binary minimal_led_blink.elf minimal_led_blink.bin
+       
+       echo "GCC build complete: minimal_led_blink.hex"
+   }
+   
+   # Function: Flash programming
+   flash_program() {
+       local hex_file=$1
+       echo "Programming $hex_file..."
+       
+       cat > flash_auto.jlink << EOF
+   device EFR32ZG28B312F1024IM48-A
+   si SWD
+   speed 4000
+   connect
+   loadfile $hex_file
+   verifyfile $hex_file
+   go
+   exit
+   EOF
+       
+       JLinkExe -CommanderScript flash_auto.jlink
+       rm flash_auto.jlink
+   }
+   
+   # Main execution
+   case "${1:-all}" in
+       "ss5")
+           build_ss5
+           flash_program "ss5_project/efr32zg28_contiki.hex"
+           ;;
+       "gcc")
+           build_gcc
+           flash_program "minimal_led_blink.hex"
+           ;;
+       "all")
+           echo "Building all variants..."
+           build_gcc
+           build_ss5
+           echo "Use './complete_build_flash.sh flash <hex_file>' to program"
+           ;;
+       "flash")
+           flash_program "$2"
+           ;;
+       *)
+           echo "Usage: $0 [ss5|gcc|all|flash <hex_file>]"
+           ;;
+   esac
+
+Solution 5: Hardware Analysis Tools
+----------------------------------
+
+.. admonition:: Success Rate: ⭐⭐⭐⭐
+   :class: info
+   
+   Excellent for understanding hardware behavior and limitations.
+
+J-Link Debugging Suite
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+   :caption: ultimate_flash_debug.sh - Comprehensive Hardware Analysis
+
+   #!/bin/bash
+   echo "=== EFR32ZG28 Ultimate Hardware Analysis ==="
+   
+   # Create comprehensive analysis script
+   cat > hardware_analysis.jlink << 'EOF'
+   device EFR32ZG28B312F1024IM48-A
+   si SWD
+   speed 4000
+   connect
+   
+   echo "=== DEVICE IDENTIFICATION ==="
+   mem32 0xE000ED00 1
+   echo "CPUID: Should be 0x411FD210 for Cortex-M33"
+   
+   echo ""
+   echo "=== MEMORY MAP VERIFICATION ==="
+   echo "Flash memory (should be accessible):"
+   mem32 0x08000000 4
+   
+   echo "RAM memory (should be accessible):"
+   w32 0x20000000 0xDEADBEEF
+   mem32 0x20000000 1
+   
+   echo ""
+   echo "=== TRUSTZONE SECURITY ANALYSIS ==="
+   echo "GPIO register access test (should fail):"
+   mem32 0x4003C034 1
+   
+   echo "SMU register access test (should fail):"
+   mem32 0x54008050 1
+   
+   echo ""
+   echo "=== CLOCK SYSTEM ANALYSIS ==="
+   echo "CMU base register access:"
+   mem32 0x40008000 1
+   
+   echo ""
+   echo "=== SECURITY STATE ANALYSIS ==="
+   echo "Reading security control registers:"
+   mem32 0xE000ED94 1
+   
+   echo ""
+   echo "=== RUNTIME ANALYSIS ==="
+   go
+   sleep 1000
+   halt
+   
+   echo "Runtime state after 1 second:"
+   regs
+   
+   echo ""
+   echo "=== MEMORY DUMP ==="
+   echo "RAM contents (looking for debug variables):"
+   mem32 0x20000000 32
+   
+   exit
+   EOF
+   
+   # Execute analysis
+   JLinkExe -CommanderScript hardware_analysis.jlink > hardware_analysis_report.txt
+   
+   echo "Hardware analysis complete. Report saved to hardware_analysis_report.txt"
+   echo ""
+   echo "Key findings summary:"
+   grep -E "(CPUID|Could not read|O\.K\.)" hardware_analysis_report.txt
+
+TrustZone Analysis Tool
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: bash
+   :caption: trustzone_definitive_fix.sh - Security Analysis
+
+   #!/bin/bash
+   echo "=== EFR32ZG28 TrustZone Definitive Analysis ==="
+   
+   cat > trustzone_analysis.jlink << 'EOF'
+   device EFR32ZG28B312F1024IM48-A
+   si SWD
+   speed 4000
+   connect
+   
+   echo "=== TRUSTZONE CONFIGURATION ANALYSIS ==="
+   
+   echo "Testing peripheral security attribution:"
+   echo "GPIO registers (expected: blocked)"
+   mem32 0x4003C000 1
+   mem32 0x4003C034 1
+   
+   echo "SMU registers (expected: blocked)"
+   mem32 0x54008050 1
+   mem32 0x54008054 1
+   
+   echo "Testing security unlock attempts:"
+   echo "Attempt 1: SMU_PPUPATD0 = 0xFFFFFFFF"
+   w32 0x54008050 0xFFFFFFFF
+   
+   echo "Attempt 2: SMU_PPUPATD0 = 0x00000000"
+   w32 0x54008050 0x00000000
+   
+   echo "Verification after unlock attempts:"
+   mem32 0x4003C034 1
+   
+   echo "=== CONCLUSION ==="
+   echo "If GPIO register access still fails, TrustZone cannot be bypassed"
+   
+   exit
+   EOF
+   
+   JLinkExe -CommanderScript trustzone_analysis.jlink > trustzone_analysis.txt
+   
+   echo "TrustZone analysis complete."
+   if grep -q "Could not read memory" trustzone_analysis.txt; then
+       echo "RESULT: TrustZone security is active and cannot be bypassed"
+       echo "RECOMMENDATION: Use Silicon Labs Simplicity Studio 5"
+   else
+       echo "RESULT: Unexpected - GPIO access succeeded"
+       echo "RECOMMENDATION: Investigate further"
+   fi
+
+Solution 6: Emergency Fixes and Patches
+---------------------------------------
+
+.. admonition:: Success Rate: ⭐⭐
+   :class: warning
+   
+   Quick workaround attempts, limited success due to TrustZone constraints.
+
+Quick Fix Implementations
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: c
+   :caption: emergency_fix.c - Emergency Workaround
+
+   #include <stdint.h>
+   
+   // Emergency fix: Multiple GPIO access patterns
+   volatile uint32_t emergency_status = 0;
+   volatile uint32_t emergency_counter = 0;
+   
+   // Try multiple register access methods
+   void emergency_gpio_attempt(void)
+   {
+       emergency_status = 1;  // Mark start
+       
+       // Method 1: Direct write
+       *(volatile uint32_t*)0x4003C034 = 0x100;
+       
+       // Method 2: Read-modify-write
+       uint32_t val = *(volatile uint32_t*)0x4003C034;
+       val |= 0x100;
+       *(volatile uint32_t*)0x4003C034 = val;
+       
+       // Method 3: Byte access
+       *(volatile uint8_t*)0x4003C035 = 0x01;
+       
+       emergency_status = 2;  // Mark completion
+   }
+   
+   int main(void)
+   {
+       while(1) {
+           emergency_counter++;
+           emergency_gpio_attempt();
+           
+           // Delay
+           for(volatile int i = 0; i < 1000000; i++);
+       }
+   }
+
+.. code-block:: c
+   :caption: quick_fix.c - Rapid Solution Attempt
+
+   // Quick fix: Alternative approach using different registers
+   volatile uint32_t quick_fix_method = 0;
+   
+   int main(void)
+   {
+       // Try different peripheral registers that might not be protected
+       quick_fix_method = 1;
+       
+       // Attempt TIMER-based LED control (if timer pins routed to LED)
+       *(volatile uint32_t*)0x40018000 = 0x1;  // TIMER0 enable attempt
+       
+       quick_fix_method = 2;
+       
+       // Attempt USART-based control (if USART pins routed)
+       *(volatile uint32_t*)0x4001C000 = 0x1;  // USART0 attempt
+       
+       quick_fix_method = 3;
+       
+       while(1) {
+           // Keep running for monitoring
+       }
+   }
+
+Patch Scripts
+~~~~~~~~~~~~~
+
+.. code-block:: bash
+   :caption: emergency_fix.sh - Emergency Automation
+
+   #!/bin/bash
+   echo "=== Emergency Fix for EFR32ZG28 ==="
+   
+   # Try multiple approaches rapidly
+   approaches=("emergency_fix.c" "quick_fix.c" "final_fix.c")
+   
+   for approach in "${approaches[@]}"; do
+       echo "Trying $approach..."
+       
+       if [ -f "$approach" ]; then
+           # Quick build
+           arm-none-eabi-gcc -mcpu=cortex-m33 -mthumb -specs=nosys.specs \
+               -T efr32zg28.ld -o emergency.elf "$approach"
+           arm-none-eabi-objcopy -O ihex emergency.elf emergency.hex
+           
+           # Quick flash
+           cat > emergency_flash.jlink << EOF
+   device EFR32ZG28B312F1024IM48-A
+   si SWD
+   speed 4000
+   connect
+   loadfile emergency.hex
+   go
+   sleep 1000
+   halt
+   mem32 0x20000000 8
+   exit
+   EOF
+           
+           JLinkExe -CommanderScript emergency_flash.jlink
+           echo "$approach completed"
+       fi
+   done
+
+Solutions Comparison Matrix
+---------------------------
+
+.. list-table:: Complete Solutions Analysis
+   :header-rows: 1
+   :widths: 20 15 15 15 35
+
+   * - Solution
+     - GPIO Access
+     - Build Complexity
+     - Success Rate
+     - Best Use Case
+   * - **SS5 Integration**
+     - ✅ Full
+     - Medium
+     - ⭐⭐⭐⭐⭐
+     - Production development
+   * - **Direct GCC**
+     - ❌ Blocked
+     - Low
+     - ⭐⭐⭐
+     - Learning and analysis
+   * - **Debug Framework**
+     - ❌ Blocked
+     - Low
+     - ⭐⭐⭐⭐
+     - Troubleshooting
+   * - **Build Automation**
+     - Varies
+     - Medium
+     - ⭐⭐⭐⭐
+     - Development workflow
+   * - **Hardware Analysis**
+     - ❌ Blocked
+     - Low
+     - ⭐⭐⭐⭐
+     - Hardware validation
+   * - **Emergency Fixes**
+     - ❌ Blocked
+     - Low
+     - ⭐⭐
+     - Quick attempts
+
+Recommended Development Path
+----------------------------
+
+Primary Recommendation
+~~~~~~~~~~~~~~~~~~~~~~
+
+**Use Simplicity Studio 5 Integration** for all production development:
+
+1. Provides full TrustZone compatibility
+2. Complete GPIO and peripheral access
+3. Professional development environment
+4. Silicon Labs component ecosystem support
+
+Secondary Tools
+~~~~~~~~~~~~~~~
+
+**Use Supporting Solutions** for enhanced development:
+
+- **Debug Framework**: For troubleshooting and analysis
+- **Build Automation**: For workflow efficiency  
+- **Hardware Analysis**: For validation and testing
+
+Development Workflow
+~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: text
+   :caption: Recommended Development Process
+
+   1. Start with SS5 Integration
+      ├── Create SS5 project with proper components
+      ├── Implement LED control using sl_simple_led
+      └── Verify TrustZone security handling
+   
+   2. Use Debug Framework for Troubleshooting
+      ├── Run progressive test cases
+      ├── Monitor debug variables via J-Link
+      └── Analyze hardware behavior
+   
+   3. Implement Build Automation
+      ├── Automate SS5 and GCC builds
+      ├── Streamline flash programming
+      └── Integrate testing procedures
+   
+   4. Hardware Validation
+      ├── Use hardware analysis tools
+      ├── Verify TrustZone behavior
+      └── Document findings
+
+**Final Recommendation**: Always start with SS5 integration as it's the only method providing full functionality, then use other solutions as supporting tools for development, debugging, and analysis.

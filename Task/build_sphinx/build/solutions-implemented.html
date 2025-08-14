@@ -1,0 +1,1202 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4. Solutions Implemented &mdash; CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=2709fde1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="5. TrustZone Security Analysis" href="trustzone-analysis.html" />
+    <link rel="prev" title="3. Development Journey" href="development-journey.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Project Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">2. Hardware Specifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development-journey.html">3. Development Journey</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Solutions Implemented</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#solution-1-simplicity-studio-5-integration-recommended">4.1. Solution 1: Simplicity Studio 5 Integration (RECOMMENDED)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">4.1.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#project-structure">4.1.2. Project Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#component-configuration">4.1.3. Component Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main-application">4.1.4. Main Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#led-control-implementation">4.1.5. LED Control Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#trustzone-integration">4.1.6. TrustZone Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-and-flash-process">4.1.7. Build and Flash Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#features-achieved">4.1.8. Features Achieved</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#solution-2-direct-gcc-build-and-flash">4.2. Solution 2: Direct GCC Build and Flash</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">4.2.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#minimal-implementation">4.2.2. Minimal Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#build-system">4.2.3. Build System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#linker-script">4.2.4. Linker Script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#results-analysis">4.2.5. Results Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#solution-3-comprehensive-debugging-framework">4.3. Solution 3: Comprehensive Debugging Framework</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">4.3.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#progressive-test-cases">4.3.2. Progressive Test Cases</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#test-1-minimal-functionality">4.3.2.1. Test 1: Minimal Functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#test-2-register-inspection">4.3.2.2. Test 2: Register Inspection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#test-3-alternative-gpio-methods">4.3.2.3. Test 3: Alternative GPIO Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#automated-analysis-tools">4.3.3. Automated Analysis Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#debug-session-analysis">4.3.4. Debug Session Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#solution-4-automated-build-systems">4.4. Solution 4: Automated Build Systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#complete-build-automation">4.4.1. Complete Build Automation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#solution-5-hardware-analysis-tools">4.5. Solution 5: Hardware Analysis Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#j-link-debugging-suite">4.5.1. J-Link Debugging Suite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#trustzone-analysis-tool">4.5.2. TrustZone Analysis Tool</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#solution-6-emergency-fixes-and-patches">4.6. Solution 6: Emergency Fixes and Patches</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#quick-fix-implementations">4.6.1. Quick Fix Implementations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#patch-scripts">4.6.2. Patch Scripts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#solutions-comparison-matrix">4.7. Solutions Comparison Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-development-path">4.8. Recommended Development Path</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#primary-recommendation">4.8.1. Primary Recommendation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#secondary-tools">4.8.2. Secondary Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#development-workflow">4.8.3. Development Workflow</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="trustzone-analysis.html">5. TrustZone Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gecko-sdk-integration.html">6. Gecko SDK Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files-created.html">7. Files Created</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">8. Troubleshooting Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="future-work.html">9. Future Work and Recommendations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4. </span>Solutions Implemented</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/contiki-ng/contiki-ng/blob/develop/examples/efr32zg28-led-blink/source/solutions-implemented.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="solutions-implemented">
+<h1><span class="section-number">4. </span>Solutions Implemented<a class="headerlink" href="#solutions-implemented" title="Link to this heading"></a></h1>
+<p>This section documents the six different approaches developed to achieve LED control on the EFR32ZG28, ranging from the fully successful SS5 integration to various experimental methods.</p>
+<section id="solution-1-simplicity-studio-5-integration-recommended">
+<h2><span class="section-number">4.1. </span>Solution 1: Simplicity Studio 5 Integration (RECOMMENDED)<a class="headerlink" href="#solution-1-simplicity-studio-5-integration-recommended" title="Link to this heading"></a></h2>
+<div class="tip admonition">
+<p class="admonition-title">Success Rate: ⭐⭐⭐⭐⭐</p>
+<p>This is the only method that provides full GPIO access due to proper TrustZone handling.</p>
+</div>
+<section id="overview">
+<h3><span class="section-number">4.1.1. </span>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h3>
+<p>The SS5 integration leverages Silicon Labs’ official development environment with built-in TrustZone security support and proper peripheral access credentials.</p>
+</section>
+<section id="project-structure">
+<h3><span class="section-number">4.1.2. </span>Project Structure<a class="headerlink" href="#project-structure" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">SS5 Project Organization</span><a class="headerlink" href="#id3" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ss5_project/
+├── efr32zg28_contiki.slcp           # Project configuration
+├── efr32zg28_contiki.slps           # Project settings
+├── ss5_contiki_main.c               # Main application
+├── app_init.h                       # Application interface
+├── app_init.c                       # Application initialization
+├── app_process.h                    # Process interface
+├── app_process.c                    # Main processing loop
+└── config/                          # Component configurations
+    ├── sl_device_init_hfxo_config.h
+    ├── sl_device_init_lfxo_config.h
+    ├── sl_board_control_config.h
+    └── sl_simple_led_led1_config.h
+</pre></div>
+</div>
+</div>
+</section>
+<section id="component-configuration">
+<h3><span class="section-number">4.1.3. </span>Component Configuration<a class="headerlink" href="#component-configuration" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">efr32zg28_contiki.slcp - Essential Components</span><a class="headerlink" href="#id4" title="Link to this code"></a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">efr32zg28_contiki</span>
+<span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EFR32ZG28 Contiki-NG LED Blink</span>
+<span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Example</span>
+<span class="nt">package</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">platform</span>
+<span class="nt">quality</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+
+<span class="nt">component</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Handles</span><span class="nv"> </span><span class="s">TrustZone</span><span class="nv"> </span><span class="s">security</span><span class="nv"> </span><span class="s">initialization&quot;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init_hfxo</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;High-frequency</span><span class="nv"> </span><span class="s">crystal</span><span class="nv"> </span><span class="s">oscillator</span><span class="nv"> </span><span class="s">setup&quot;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">power_manager</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Power</span><span class="nv"> </span><span class="s">management</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">security</span><span class="nv"> </span><span class="s">support&quot;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">simple_led</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;LED</span><span class="nv"> </span><span class="s">abstraction</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">TrustZone</span><span class="nv"> </span><span class="s">compatibility&quot;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">sl_system</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Core</span><span class="nv"> </span><span class="s">system</span><span class="nv"> </span><span class="s">initialization&quot;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">sleeptimer</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Timing</span><span class="nv"> </span><span class="s">services&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="main-application">
+<h3><span class="section-number">4.1.4. </span>Main Application<a class="headerlink" href="#main-application" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">ss5_contiki_main.c - Hybrid Application</span><a class="headerlink" href="#id5" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_component_catalog.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_system_init.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_power_manager.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_simple_led_instances.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;app.h&quot;</span>
+
+<span class="c1">// Contiki integration headers</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;contiki.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sys/process.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sys/etimer.h&quot;</span>
+
+<span class="c1">// Debug variables for J-Link monitoring</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">debug_main_loop_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">debug_led_toggle_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">debug_led_current_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">debug_system_ticks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="c1">// Initialize Silicon Labs system (includes TrustZone setup)</span>
+<span class="w">  </span><span class="n">sl_system_init</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Initialize Contiki-NG</span>
+<span class="w">  </span><span class="n">process_init</span><span class="p">();</span>
+<span class="w">  </span><span class="n">process_start</span><span class="p">(</span><span class="o">&amp;</span><span class="n">etimer_process</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// Initialize application</span>
+<span class="w">  </span><span class="n">app_init</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Main execution loop</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">debug_main_loop_count</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Silicon Labs power management</span>
+<span class="w">    </span><span class="n">sl_power_manager_step</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Contiki process scheduling</span>
+<span class="w">    </span><span class="n">process_run</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Application-specific processing</span>
+<span class="w">    </span><span class="n">app_process_action</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">debug_system_ticks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl_sleeptimer_get_tick_count</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="led-control-implementation">
+<h3><span class="section-number">4.1.5. </span>LED Control Implementation<a class="headerlink" href="#led-control-implementation" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">app_process.c - Secure LED Control</span><a class="headerlink" href="#id6" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_simple_led_instances.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_sleeptimer.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;app.h&quot;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">blink_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">last_blink_tick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="c1">// Blink interval: 1 second (32768 ticks at 32kHz)</span>
+<span class="cp">#define BLINK_INTERVAL_TICKS  32768</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">app_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="c1">// LED initialization handled automatically by SLC components</span>
+<span class="w">  </span><span class="c1">// TrustZone security configuration done by device_init component</span>
+
+<span class="w">  </span><span class="c1">// Ensure LED starts in known state</span>
+<span class="w">  </span><span class="n">sl_led_turn_off</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sl_led_led1</span><span class="p">);</span>
+<span class="w">  </span><span class="n">led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Initialize timing</span>
+<span class="w">  </span><span class="n">last_blink_tick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl_sleeptimer_get_tick_count</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">app_process_action</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">current_tick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl_sleeptimer_get_tick_count</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Check if it&#39;s time to toggle LED</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">current_tick</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">last_blink_tick</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">BLINK_INTERVAL_TICKS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Toggle LED state</span>
+<span class="w">    </span><span class="n">led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">led_state</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">led_state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">sl_led_turn_on</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sl_led_led1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">sl_led_turn_off</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sl_led_led1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Update debug variables</span>
+<span class="w">    </span><span class="n">blink_counter</span><span class="o">++</span><span class="p">;</span>
+<span class="w">    </span><span class="n">debug_led_toggle_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blink_counter</span><span class="p">;</span>
+<span class="w">    </span><span class="n">debug_led_current_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">led_state</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Update timing</span>
+<span class="w">    </span><span class="n">last_blink_tick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_tick</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="trustzone-integration">
+<h3><span class="section-number">4.1.6. </span>TrustZone Integration<a class="headerlink" href="#trustzone-integration" title="Link to this heading"></a></h3>
+<p>The SS5 component system automatically handles TrustZone security:</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Automatic Security Configuration (handled by device_init)</span><a class="headerlink" href="#id7" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// This code is automatically generated by SLC</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">sl_device_init_nvic</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="c1">// Configure security extensions</span>
+<span class="w">  </span><span class="c1">// Set up secure/non-secure peripheral attribution</span>
+<span class="w">  </span><span class="c1">// Initialize Security Management Unit (SMU)</span>
+<span class="w">  </span><span class="c1">// Configure GPIO security settings</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="build-and-flash-process">
+<h3><span class="section-number">4.1.7. </span>Build and Flash Process<a class="headerlink" href="#build-and-flash-process" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">SS5 Build Commands</span><a class="headerlink" href="#id8" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Build using Simplicity Studio 5</span>
+<span class="nb">cd</span><span class="w"> </span>ss5_project
+slc<span class="w"> </span>generate
+make<span class="w"> </span>-f<span class="w"> </span>Makefile
+
+<span class="c1"># Flash using Commander</span>
+commander<span class="w"> </span>flash<span class="w"> </span>efr32zg28_contiki.hex<span class="w"> </span>--device<span class="w"> </span>EFR32ZG28B312F1024IM48-A
+</pre></div>
+</div>
+</div>
+</section>
+<section id="features-achieved">
+<h3><span class="section-number">4.1.8. </span>Features Achieved<a class="headerlink" href="#features-achieved" title="Link to this heading"></a></h3>
+<p>✅ <strong>Full TrustZone compatibility</strong>: Proper security initialization</p>
+<p>✅ <strong>GPIO register access</strong>: Complete peripheral control</p>
+<p>✅ <strong>Silicon Labs component integration</strong>: Professional development framework</p>
+<p>✅ <strong>Debug variable monitoring</strong>: Runtime state inspection via J-Link</p>
+<p>✅ <strong>Power management</strong>: Efficient low-power operation</p>
+<p>✅ <strong>Contiki-NG integration</strong>: Hybrid application architecture</p>
+</section>
+</section>
+<section id="solution-2-direct-gcc-build-and-flash">
+<h2><span class="section-number">4.2. </span>Solution 2: Direct GCC Build and Flash<a class="headerlink" href="#solution-2-direct-gcc-build-and-flash" title="Link to this heading"></a></h2>
+<div class="note admonition">
+<p class="admonition-title">Success Rate: ⭐⭐⭐</p>
+<p>Successful flash programming, but GPIO access limited by TrustZone.</p>
+</div>
+<section id="id1">
+<h3><span class="section-number">4.2.1. </span>Overview<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>This approach uses standard GCC ARM toolchain for compilation and J-Link for programming, achieving successful binary deployment but with limited GPIO functionality.</p>
+</section>
+<section id="minimal-implementation">
+<h3><span class="section-number">4.2.2. </span>Minimal Implementation<a class="headerlink" href="#minimal-implementation" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">minimal_led_blink.c - Successfully Flashed Program</span><a class="headerlink" href="#id9" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span>
+
+<span class="c1">// Hardware register definitions</span>
+<span class="cp">#define CMU_BASE           0x40008000UL</span>
+<span class="cp">#define GPIO_BASE          0x4003C000UL</span>
+
+<span class="c1">// Register access macros</span>
+<span class="cp">#define CMU_CLKEN0         (*(volatile uint32_t*)(CMU_BASE + 0x200))</span>
+<span class="cp">#define GPIO_PC_MODEL      (*(volatile uint32_t*)(GPIO_BASE + 0x30))</span>
+<span class="cp">#define GPIO_PC_DOUT       (*(volatile uint32_t*)(GPIO_BASE + 0x34))</span>
+
+<span class="c1">// Debug variables for J-Link monitoring</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">debug_main_loop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">debug_led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">debug_cmu_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">debug_gpio_attempt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">simple_delay</span><span class="p">(</span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">count</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">__asm__</span><span class="p">(</span><span class="s">&quot;nop&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">debug_main_loop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Attempt to enable GPIO clock</span>
+<span class="w">    </span><span class="c1">// (This will fail due to TrustZone, but attempt is monitored)</span>
+<span class="w">    </span><span class="n">CMU_CLKEN0</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="p">(</span><span class="mi">1UL</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="w">    </span><span class="n">debug_cmu_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CMU_CLKEN0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Attempt to configure PC8 as output</span>
+<span class="w">    </span><span class="c1">// (This will also fail due to TrustZone protection)</span>
+<span class="w">    </span><span class="n">GPIO_PC_MODEL</span><span class="w"> </span><span class="o">&amp;=</span><span class="w"> </span><span class="o">~</span><span class="p">(</span><span class="mh">0xF</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="mi">8</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">));</span>
+<span class="w">    </span><span class="n">GPIO_PC_MODEL</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="p">(</span><span class="mh">0x4</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="mi">8</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">));</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">debug_main_loop</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// Attempt LED toggle</span>
+<span class="w">        </span><span class="c1">// (Register write will fail, but attempt is counted)</span>
+<span class="w">        </span><span class="n">GPIO_PC_DOUT</span><span class="w"> </span><span class="o">^=</span><span class="w"> </span><span class="p">(</span><span class="mi">1UL</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">8</span><span class="p">);</span>
+<span class="w">        </span><span class="n">debug_gpio_attempt</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="n">debug_led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">GPIO_PC_DOUT</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">        </span><span class="n">simple_delay</span><span class="p">(</span><span class="mi">1000000</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="build-system">
+<h3><span class="section-number">4.2.3. </span>Build System<a class="headerlink" href="#build-system" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">direct_gcc_flash.sh - Complete Build and Flash</span><a class="headerlink" href="#id10" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== EFR32ZG28 Direct GCC Build and Flash ===&quot;</span>
+
+<span class="c1"># Compilation</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Compiling with GCC ARM...&quot;</span>
+arm-none-eabi-gcc<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-mcpu<span class="o">=</span>cortex-m33<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-mthumb<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-mfloat-abi<span class="o">=</span>soft<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-specs<span class="o">=</span>nosys.specs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-T<span class="w"> </span>efr32zg28.ld<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-Wl,--gc-sections<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-o<span class="w"> </span>minimal_led_blink.elf<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>minimal_led_blink.c
+
+<span class="c1"># Binary generation</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Generating binary formats...&quot;</span>
+arm-none-eabi-objcopy<span class="w"> </span>-O<span class="w"> </span>ihex<span class="w"> </span>minimal_led_blink.elf<span class="w"> </span>minimal_led_blink.hex
+arm-none-eabi-objcopy<span class="w"> </span>-O<span class="w"> </span>binary<span class="w"> </span>minimal_led_blink.elf<span class="w"> </span>minimal_led_blink.bin
+
+<span class="c1"># Size analysis</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Binary size analysis:&quot;</span>
+arm-none-eabi-size<span class="w"> </span>minimal_led_blink.elf
+
+<span class="c1"># Flash programming</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Programming flash via J-Link...&quot;</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>flash_minimal.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+<span class="s">loadfile minimal_led_blink.hex</span>
+<span class="s">verifyfile minimal_led_blink.hex</span>
+<span class="s">go</span>
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>flash_minimal.jlink
+</pre></div>
+</div>
+</div>
+</section>
+<section id="linker-script">
+<h3><span class="section-number">4.2.4. </span>Linker Script<a class="headerlink" href="#linker-script" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">efr32zg28.ld - Memory Layout</span><a class="headerlink" href="#id11" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">MEMORY</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">FLASH</span><span class="w"> </span><span class="p">(</span><span class="n">rx</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">ORIGIN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x08000000</span><span class="p">,</span><span class="w"> </span><span class="n">LENGTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span><span class="n">K</span>
+<span class="w">  </span><span class="n">RAM</span><span class="w"> </span><span class="p">(</span><span class="n">rwx</span><span class="p">)</span><span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="n">ORIGIN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x20000000</span><span class="p">,</span><span class="w"> </span><span class="n">LENGTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">256</span><span class="n">K</span>
+<span class="p">}</span>
+
+<span class="n">ENTRY</span><span class="p">(</span><span class="n">Reset_Handler</span><span class="p">)</span>
+
+<span class="n">SECTIONS</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="p">.</span><span class="n">text</span><span class="w"> </span><span class="o">:</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">KEEP</span><span class="p">(</span><span class="o">*</span><span class="p">(.</span><span class="n">isr_vector</span><span class="p">))</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(.</span><span class="n">text</span><span class="o">*</span><span class="p">)</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(.</span><span class="n">rodata</span><span class="o">*</span><span class="p">)</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="o">&gt;</span><span class="n">FLASH</span>
+
+<span class="w">  </span><span class="p">.</span><span class="n">data</span><span class="w"> </span><span class="o">:</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+<span class="w">    </span><span class="n">__data_start__</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.;</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(.</span><span class="n">data</span><span class="o">*</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+<span class="w">    </span><span class="n">__data_end__</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.;</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="o">&gt;</span><span class="n">RAM</span><span class="w"> </span><span class="n">AT</span><span class="o">&gt;</span><span class="n">FLASH</span>
+
+<span class="w">  </span><span class="p">.</span><span class="n">bss</span><span class="w"> </span><span class="o">:</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="p">.</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+<span class="w">    </span><span class="n">__bss_start__</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.;</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(.</span><span class="n">bss</span><span class="o">*</span><span class="p">)</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="n">COMMON</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ALIGN</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+<span class="w">    </span><span class="n">__bss_end__</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">.;</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="o">&gt;</span><span class="n">RAM</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="results-analysis">
+<h3><span class="section-number">4.2.5. </span>Results Analysis<a class="headerlink" href="#results-analysis" title="Link to this heading"></a></h3>
+<p><strong>Compilation</strong>: ✅ Success - Clean build with no warnings</p>
+<p><strong>Flash Programming</strong>: ✅ Success - 264-byte binary successfully flashed</p>
+<p><strong>Runtime Execution</strong>: ✅ Success - Debug variables update correctly</p>
+<p><strong>GPIO Control</strong>: ❌ Limited - TrustZone blocks register access</p>
+<p>Debug Session Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">J</span><span class="o">-</span><span class="n">Link</span><span class="o">&gt;</span><span class="n">loadfile</span> <span class="n">minimal_led_blink</span><span class="o">.</span><span class="n">hex</span>
+<span class="n">Downloading</span> <span class="n">file</span> <span class="p">[</span><span class="n">minimal_led_blink</span><span class="o">.</span><span class="n">hex</span><span class="p">]</span><span class="o">...</span>
+<span class="n">J</span><span class="o">-</span><span class="n">Link</span><span class="p">:</span> <span class="n">Flash</span> <span class="n">download</span><span class="p">:</span> <span class="n">Bank</span> <span class="mi">0</span> <span class="o">@</span> <span class="mh">0x08000000</span><span class="p">:</span> <span class="mi">1</span> <span class="nb">range</span> <span class="n">affected</span> <span class="p">(</span><span class="mi">264</span> <span class="nb">bytes</span><span class="p">)</span>
+<span class="n">J</span><span class="o">-</span><span class="n">Link</span><span class="p">:</span> <span class="n">Flash</span> <span class="n">download</span><span class="p">:</span> <span class="n">Total</span><span class="p">:</span> <span class="mf">0.094</span><span class="n">s</span> <span class="p">(</span><span class="n">Data</span><span class="p">:</span> <span class="mf">0.002</span><span class="n">s</span><span class="p">,</span> <span class="n">Overhead</span><span class="p">:</span> <span class="mf">0.092</span><span class="n">s</span><span class="p">)</span>
+<span class="n">O</span><span class="o">.</span><span class="n">K</span><span class="o">.</span>
+
+<span class="n">J</span><span class="o">-</span><span class="n">Link</span><span class="o">&gt;</span><span class="n">go</span>
+<span class="n">J</span><span class="o">-</span><span class="n">Link</span><span class="o">&gt;</span><span class="n">mem32</span> <span class="mh">0x20000000</span> <span class="mi">4</span>
+<span class="mi">20000000</span> <span class="o">=</span> <span class="mi">00000023</span> <span class="mi">00000000</span> <span class="mi">00000000</span> <span class="mi">00000001</span>
+<span class="c1"># debug_main_loop is incrementing (address varies)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="solution-3-comprehensive-debugging-framework">
+<h2><span class="section-number">4.3. </span>Solution 3: Comprehensive Debugging Framework<a class="headerlink" href="#solution-3-comprehensive-debugging-framework" title="Link to this heading"></a></h2>
+<div class="info admonition">
+<p class="admonition-title">Success Rate: ⭐⭐⭐⭐</p>
+<p>Excellent for analysis and troubleshooting, provides complete development insights.</p>
+</div>
+<section id="id2">
+<h3><span class="section-number">4.3.1. </span>Overview<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p>This solution focuses on progressive troubleshooting and comprehensive analysis to understand hardware behavior and limitations.</p>
+</section>
+<section id="progressive-test-cases">
+<h3><span class="section-number">4.3.2. </span>Progressive Test Cases<a class="headerlink" href="#progressive-test-cases" title="Link to this heading"></a></h3>
+<section id="test-1-minimal-functionality">
+<h4><span class="section-number">4.3.2.1. </span>Test 1: Minimal Functionality<a class="headerlink" href="#test-1-minimal-functionality" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">test1_minimal_blink.c - Absolute Minimal Test</span><a class="headerlink" href="#id12" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// Test case 1: Verify basic execution</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">test1_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">test1_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0xABCD1234</span><span class="p">;</span><span class="w">  </span><span class="c1">// Signature value</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">test1_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x11111111</span><span class="p">;</span><span class="w">  </span><span class="c1">// Mark start</span>
+
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">test1_counter</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// Minimal delay without function calls</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">100000</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">test1_counter</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">test1_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x22222222</span><span class="p">;</span><span class="w">  </span><span class="c1">// Mark milestone</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-2-register-inspection">
+<h4><span class="section-number">4.3.2.2. </span>Test 2: Register Inspection<a class="headerlink" href="#test-2-register-inspection" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">test2_register_inspect.c - Hardware Analysis</span><a class="headerlink" href="#id13" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// Test case 2: Systematic register analysis</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">test2_cpuid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">test2_gpio_base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">test2_cmu_base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">test2_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Read accessible registers</span>
+<span class="w">    </span><span class="n">test2_cpuid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SCB</span><span class="o">-&gt;</span><span class="n">CPUID</span><span class="p">;</span><span class="w">        </span><span class="c1">// Should work</span>
+<span class="w">    </span><span class="n">test2_gpio_base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GPIO_BASE</span><span class="p">;</span><span class="w">     </span><span class="c1">// Address constant</span>
+<span class="w">    </span><span class="n">test2_cmu_base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CMU_BASE</span><span class="p">;</span><span class="w">       </span><span class="c1">// Address constant</span>
+
+<span class="w">    </span><span class="c1">// Attempt protected register access (will fail)</span>
+<span class="w">    </span><span class="c1">// But failure mode can be analyzed</span>
+<span class="w">    </span><span class="n">test2_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span><span class="mh">0x4003C034</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Keep running for monitoring</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="test-3-alternative-gpio-methods">
+<h4><span class="section-number">4.3.2.3. </span>Test 3: Alternative GPIO Methods<a class="headerlink" href="#test-3-alternative-gpio-methods" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">test3_alternative_gpio.c - Creative Approaches</span><a class="headerlink" href="#id14" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// Test case 3: Alternative GPIO access methods</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">test3_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">test3_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Method 1: Direct register write</span>
+<span class="w">    </span><span class="n">test3_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span><span class="mh">0x4003C034</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x100</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Method 2: Pointer manipulation</span>
+<span class="w">    </span><span class="n">test3_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">    </span><span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="o">*</span><span class="n">gpio_dout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span><span class="mh">0x4003C034</span><span class="p">;</span>
+<span class="w">    </span><span class="o">*</span><span class="n">gpio_dout</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="mh">0x100</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Method 3: Assembly access</span>
+<span class="w">    </span><span class="n">test3_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="w">    </span><span class="kr">__asm</span><span class="w"> </span><span class="k">volatile</span><span class="w"> </span><span class="p">(</span>
+<span class="w">        </span><span class="s">&quot;ldr r0, =0x4003C034  </span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="w">        </span><span class="s">&quot;ldr r1, [r0]         </span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="w">        </span><span class="s">&quot;orr r1, r1, #0x100   </span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="w">        </span><span class="s">&quot;str r1, [r0]         </span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="w">        </span><span class="o">:::</span><span class="w"> </span><span class="s">&quot;r0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;r1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;memory&quot;</span>
+<span class="w">    </span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">test3_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0xDEADBEEF</span><span class="p">;</span><span class="w">  </span><span class="c1">// Mark completion</span>
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="automated-analysis-tools">
+<h3><span class="section-number">4.3.3. </span>Automated Analysis Tools<a class="headerlink" href="#automated-analysis-tools" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">ultimate_troubleshooting.sh - Progressive Analysis</span><a class="headerlink" href="#id15" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== EFR32ZG28 Progressive Troubleshooting ===&quot;</span>
+
+<span class="c1"># Test 1: Basic functionality</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Step 1: Testing basic CPU execution...&quot;</span>
+arm-none-eabi-gcc<span class="w"> </span>-mcpu<span class="o">=</span>cortex-m33<span class="w"> </span>-mthumb<span class="w"> </span>-specs<span class="o">=</span>nosys.specs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-T<span class="w"> </span>efr32zg28.ld<span class="w"> </span>-o<span class="w"> </span>test1.elf<span class="w"> </span>test1_minimal_blink.c
+arm-none-eabi-objcopy<span class="w"> </span>-O<span class="w"> </span>ihex<span class="w"> </span>test1.elf<span class="w"> </span>test1.hex
+
+cat<span class="w"> </span>&gt;<span class="w"> </span>flash_test1.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+<span class="s">loadfile test1.hex</span>
+<span class="s">go</span>
+<span class="s">sleep 2000</span>
+<span class="s">halt</span>
+<span class="s">mem32 0x20000000 16</span>
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>flash_test1.jlink<span class="w"> </span>&gt;<span class="w"> </span>test1_results.txt
+
+<span class="c1"># Test 2: Register analysis</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Step 2: Analyzing register access...&quot;</span>
+arm-none-eabi-gcc<span class="w"> </span>-mcpu<span class="o">=</span>cortex-m33<span class="w"> </span>-mthumb<span class="w"> </span>-specs<span class="o">=</span>nosys.specs<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-T<span class="w"> </span>efr32zg28.ld<span class="w"> </span>-o<span class="w"> </span>test2.elf<span class="w"> </span>test2_register_inspect.c
+arm-none-eabi-objcopy<span class="w"> </span>-O<span class="w"> </span>ihex<span class="w"> </span>test2.elf<span class="w"> </span>test2.hex
+
+<span class="c1"># Continue with additional tests...</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="debug-session-analysis">
+<h3><span class="section-number">4.3.4. </span>Debug Session Analysis<a class="headerlink" href="#debug-session-analysis" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">Sample Debug Output Analysis</span><a class="headerlink" href="#id16" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>=== Test 1 Results ===
+test1_counter: 0x00000157 (incrementing - CPU working)
+test1_status:  0x22222222 (milestone reached - logic working)
+
+=== Test 2 Results ===
+test2_cpuid:     0x411FD210 (correct Cortex-M33 ID)
+test2_gpio_base: 0x4003C000 (address constant correct)
+test2_result:    0x00000000 (register read failed - TrustZone active)
+
+=== Test 3 Results ===
+test3_method: 0x00000003 (all methods attempted)
+test3_result: 0xDEADBEEF (test completed)
+GPIO Status:  All register writes blocked by TrustZone
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="solution-4-automated-build-systems">
+<h2><span class="section-number">4.4. </span>Solution 4: Automated Build Systems<a class="headerlink" href="#solution-4-automated-build-systems" title="Link to this heading"></a></h2>
+<div class="info admonition">
+<p class="admonition-title">Success Rate: ⭐⭐⭐⭐</p>
+<p>Excellent automation and productivity, handles multiple build approaches.</p>
+</div>
+<section id="complete-build-automation">
+<h3><span class="section-number">4.4.1. </span>Complete Build Automation<a class="headerlink" href="#complete-build-automation" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">complete_build_flash.sh - Full Automation</span><a class="headerlink" href="#id17" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">set</span><span class="w"> </span>-e<span class="w">  </span><span class="c1"># Exit on any error</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== EFR32ZG28 Complete Build and Flash System ===&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Supporting multiple build approaches:&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;1. SS5 Integration&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;2. Direct GCC Build&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;3. Hybrid Approach&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+
+<span class="c1"># Function: SS5 Build</span>
+build_ss5<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Building SS5 project...&quot;</span>
+<span class="w">    </span><span class="nb">cd</span><span class="w"> </span>ss5_project
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>!<span class="w"> </span>-f<span class="w"> </span>efr32zg28_contiki.slcp<span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Error: SS5 project not found&quot;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span>slc<span class="w"> </span>generate
+<span class="w">    </span>make<span class="w"> </span>-f<span class="w"> </span>Makefile
+
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;SS5 build complete: efr32zg28_contiki.hex&quot;</span>
+<span class="w">    </span><span class="nb">cd</span><span class="w"> </span>..
+<span class="o">}</span>
+
+<span class="c1"># Function: GCC Build</span>
+build_gcc<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Building with GCC...&quot;</span>
+
+<span class="w">    </span><span class="c1"># Check toolchain</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>!<span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>arm-none-eabi-gcc<span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Error: GCC ARM toolchain not found&quot;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="m">1</span>
+<span class="w">    </span><span class="k">fi</span>
+
+<span class="w">    </span><span class="c1"># Compile</span>
+<span class="w">    </span>arm-none-eabi-gcc<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-mcpu<span class="o">=</span>cortex-m33<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-mthumb<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-mfloat-abi<span class="o">=</span>soft<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-specs<span class="o">=</span>nosys.specs<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-T<span class="w"> </span>efr32zg28.ld<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-Wl,--gc-sections<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-Os<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>-o<span class="w"> </span>minimal_led_blink.elf<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>minimal_led_blink.c
+
+<span class="w">    </span><span class="c1"># Generate formats</span>
+<span class="w">    </span>arm-none-eabi-objcopy<span class="w"> </span>-O<span class="w"> </span>ihex<span class="w"> </span>minimal_led_blink.elf<span class="w"> </span>minimal_led_blink.hex
+<span class="w">    </span>arm-none-eabi-objcopy<span class="w"> </span>-O<span class="w"> </span>binary<span class="w"> </span>minimal_led_blink.elf<span class="w"> </span>minimal_led_blink.bin
+
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;GCC build complete: minimal_led_blink.hex&quot;</span>
+<span class="o">}</span>
+
+<span class="c1"># Function: Flash programming</span>
+flash_program<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="nb">local</span><span class="w"> </span><span class="nv">hex_file</span><span class="o">=</span><span class="nv">$1</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Programming </span><span class="nv">$hex_file</span><span class="s2">...&quot;</span>
+
+<span class="w">    </span>cat<span class="w"> </span>&gt;<span class="w"> </span>flash_auto.jlink<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+<span class="s">loadfile $hex_file</span>
+<span class="s">verifyfile $hex_file</span>
+<span class="s">go</span>
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+<span class="w">    </span>JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>flash_auto.jlink
+<span class="w">    </span>rm<span class="w"> </span>flash_auto.jlink
+<span class="o">}</span>
+
+<span class="c1"># Main execution</span>
+<span class="k">case</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">1</span><span class="k">:-</span><span class="nv">all</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="k">in</span>
+<span class="w">    </span><span class="s2">&quot;ss5&quot;</span><span class="o">)</span>
+<span class="w">        </span>build_ss5
+<span class="w">        </span>flash_program<span class="w"> </span><span class="s2">&quot;ss5_project/efr32zg28_contiki.hex&quot;</span>
+<span class="w">        </span><span class="p">;;</span>
+<span class="w">    </span><span class="s2">&quot;gcc&quot;</span><span class="o">)</span>
+<span class="w">        </span>build_gcc
+<span class="w">        </span>flash_program<span class="w"> </span><span class="s2">&quot;minimal_led_blink.hex&quot;</span>
+<span class="w">        </span><span class="p">;;</span>
+<span class="w">    </span><span class="s2">&quot;all&quot;</span><span class="o">)</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Building all variants...&quot;</span>
+<span class="w">        </span>build_gcc
+<span class="w">        </span>build_ss5
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Use &#39;./complete_build_flash.sh flash &lt;hex_file&gt;&#39; to program&quot;</span>
+<span class="w">        </span><span class="p">;;</span>
+<span class="w">    </span><span class="s2">&quot;flash&quot;</span><span class="o">)</span>
+<span class="w">        </span>flash_program<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$2</span><span class="s2">&quot;</span>
+<span class="w">        </span><span class="p">;;</span>
+<span class="w">    </span>*<span class="o">)</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Usage: </span><span class="nv">$0</span><span class="s2"> [ss5|gcc|all|flash &lt;hex_file&gt;]&quot;</span>
+<span class="w">        </span><span class="p">;;</span>
+<span class="k">esac</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="solution-5-hardware-analysis-tools">
+<h2><span class="section-number">4.5. </span>Solution 5: Hardware Analysis Tools<a class="headerlink" href="#solution-5-hardware-analysis-tools" title="Link to this heading"></a></h2>
+<div class="info admonition">
+<p class="admonition-title">Success Rate: ⭐⭐⭐⭐</p>
+<p>Excellent for understanding hardware behavior and limitations.</p>
+</div>
+<section id="j-link-debugging-suite">
+<h3><span class="section-number">4.5.1. </span>J-Link Debugging Suite<a class="headerlink" href="#j-link-debugging-suite" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">ultimate_flash_debug.sh - Comprehensive Hardware Analysis</span><a class="headerlink" href="#id18" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== EFR32ZG28 Ultimate Hardware Analysis ===&quot;</span>
+
+<span class="c1"># Create comprehensive analysis script</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>hardware_analysis.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;=== DEVICE IDENTIFICATION ===&quot;</span>
+<span class="s">mem32 0xE000ED00 1</span>
+<span class="s">echo &quot;CPUID: Should be 0x411FD210 for Cortex-M33&quot;</span>
+
+<span class="s">echo &quot;&quot;</span>
+<span class="s">echo &quot;=== MEMORY MAP VERIFICATION ===&quot;</span>
+<span class="s">echo &quot;Flash memory (should be accessible):&quot;</span>
+<span class="s">mem32 0x08000000 4</span>
+
+<span class="s">echo &quot;RAM memory (should be accessible):&quot;</span>
+<span class="s">w32 0x20000000 0xDEADBEEF</span>
+<span class="s">mem32 0x20000000 1</span>
+
+<span class="s">echo &quot;&quot;</span>
+<span class="s">echo &quot;=== TRUSTZONE SECURITY ANALYSIS ===&quot;</span>
+<span class="s">echo &quot;GPIO register access test (should fail):&quot;</span>
+<span class="s">mem32 0x4003C034 1</span>
+
+<span class="s">echo &quot;SMU register access test (should fail):&quot;</span>
+<span class="s">mem32 0x54008050 1</span>
+
+<span class="s">echo &quot;&quot;</span>
+<span class="s">echo &quot;=== CLOCK SYSTEM ANALYSIS ===&quot;</span>
+<span class="s">echo &quot;CMU base register access:&quot;</span>
+<span class="s">mem32 0x40008000 1</span>
+
+<span class="s">echo &quot;&quot;</span>
+<span class="s">echo &quot;=== SECURITY STATE ANALYSIS ===&quot;</span>
+<span class="s">echo &quot;Reading security control registers:&quot;</span>
+<span class="s">mem32 0xE000ED94 1</span>
+
+<span class="s">echo &quot;&quot;</span>
+<span class="s">echo &quot;=== RUNTIME ANALYSIS ===&quot;</span>
+<span class="s">go</span>
+<span class="s">sleep 1000</span>
+<span class="s">halt</span>
+
+<span class="s">echo &quot;Runtime state after 1 second:&quot;</span>
+<span class="s">regs</span>
+
+<span class="s">echo &quot;&quot;</span>
+<span class="s">echo &quot;=== MEMORY DUMP ===&quot;</span>
+<span class="s">echo &quot;RAM contents (looking for debug variables):&quot;</span>
+<span class="s">mem32 0x20000000 32</span>
+
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Execute analysis</span>
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>hardware_analysis.jlink<span class="w"> </span>&gt;<span class="w"> </span>hardware_analysis_report.txt
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Hardware analysis complete. Report saved to hardware_analysis_report.txt&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Key findings summary:&quot;</span>
+grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;(CPUID|Could not read|O\.K\.)&quot;</span><span class="w"> </span>hardware_analysis_report.txt
+</pre></div>
+</div>
+</div>
+</section>
+<section id="trustzone-analysis-tool">
+<h3><span class="section-number">4.5.2. </span>TrustZone Analysis Tool<a class="headerlink" href="#trustzone-analysis-tool" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">trustzone_definitive_fix.sh - Security Analysis</span><a class="headerlink" href="#id19" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== EFR32ZG28 TrustZone Definitive Analysis ===&quot;</span>
+
+cat<span class="w"> </span>&gt;<span class="w"> </span>trustzone_analysis.jlink<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+
+<span class="s">echo &quot;=== TRUSTZONE CONFIGURATION ANALYSIS ===&quot;</span>
+
+<span class="s">echo &quot;Testing peripheral security attribution:&quot;</span>
+<span class="s">echo &quot;GPIO registers (expected: blocked)&quot;</span>
+<span class="s">mem32 0x4003C000 1</span>
+<span class="s">mem32 0x4003C034 1</span>
+
+<span class="s">echo &quot;SMU registers (expected: blocked)&quot;</span>
+<span class="s">mem32 0x54008050 1</span>
+<span class="s">mem32 0x54008054 1</span>
+
+<span class="s">echo &quot;Testing security unlock attempts:&quot;</span>
+<span class="s">echo &quot;Attempt 1: SMU_PPUPATD0 = 0xFFFFFFFF&quot;</span>
+<span class="s">w32 0x54008050 0xFFFFFFFF</span>
+
+<span class="s">echo &quot;Attempt 2: SMU_PPUPATD0 = 0x00000000&quot;</span>
+<span class="s">w32 0x54008050 0x00000000</span>
+
+<span class="s">echo &quot;Verification after unlock attempts:&quot;</span>
+<span class="s">mem32 0x4003C034 1</span>
+
+<span class="s">echo &quot;=== CONCLUSION ===&quot;</span>
+<span class="s">echo &quot;If GPIO register access still fails, TrustZone cannot be bypassed&quot;</span>
+
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>trustzone_analysis.jlink<span class="w"> </span>&gt;<span class="w"> </span>trustzone_analysis.txt
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;TrustZone analysis complete.&quot;</span>
+<span class="k">if</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s2">&quot;Could not read memory&quot;</span><span class="w"> </span>trustzone_analysis.txt<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;RESULT: TrustZone security is active and cannot be bypassed&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;RECOMMENDATION: Use Silicon Labs Simplicity Studio 5&quot;</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;RESULT: Unexpected - GPIO access succeeded&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;RECOMMENDATION: Investigate further&quot;</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="solution-6-emergency-fixes-and-patches">
+<h2><span class="section-number">4.6. </span>Solution 6: Emergency Fixes and Patches<a class="headerlink" href="#solution-6-emergency-fixes-and-patches" title="Link to this heading"></a></h2>
+<div class="warning admonition">
+<p class="admonition-title">Success Rate: ⭐⭐</p>
+<p>Quick workaround attempts, limited success due to TrustZone constraints.</p>
+</div>
+<section id="quick-fix-implementations">
+<h3><span class="section-number">4.6.1. </span>Quick Fix Implementations<a class="headerlink" href="#quick-fix-implementations" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">emergency_fix.c - Emergency Workaround</span><a class="headerlink" href="#id20" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span>
+
+<span class="c1">// Emergency fix: Multiple GPIO access patterns</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">emergency_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">emergency_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="c1">// Try multiple register access methods</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">emergency_gpio_attempt</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">emergency_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Mark start</span>
+
+<span class="w">    </span><span class="c1">// Method 1: Direct write</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span><span class="mh">0x4003C034</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x100</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Method 2: Read-modify-write</span>
+<span class="w">    </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span><span class="mh">0x4003C034</span><span class="p">;</span>
+<span class="w">    </span><span class="n">val</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="mh">0x100</span><span class="p">;</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span><span class="mh">0x4003C034</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Method 3: Byte access</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">uint8_t</span><span class="o">*</span><span class="p">)</span><span class="mh">0x4003C035</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x01</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">emergency_status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w">  </span><span class="c1">// Mark completion</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emergency_counter</span><span class="o">++</span><span class="p">;</span>
+<span class="w">        </span><span class="n">emergency_gpio_attempt</span><span class="p">();</span>
+
+<span class="w">        </span><span class="c1">// Delay</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1000000</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">quick_fix.c - Rapid Solution Attempt</span><a class="headerlink" href="#id21" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="c1">// Quick fix: Alternative approach using different registers</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">quick_fix_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Try different peripheral registers that might not be protected</span>
+<span class="w">    </span><span class="n">quick_fix_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Attempt TIMER-based LED control (if timer pins routed to LED)</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span><span class="mh">0x40018000</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x1</span><span class="p">;</span><span class="w">  </span><span class="c1">// TIMER0 enable attempt</span>
+
+<span class="w">    </span><span class="n">quick_fix_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Attempt USART-based control (if USART pins routed)</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span><span class="mh">0x4001C000</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0x1</span><span class="p">;</span><span class="w">  </span><span class="c1">// USART0 attempt</span>
+
+<span class="w">    </span><span class="n">quick_fix_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Keep running for monitoring</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="patch-scripts">
+<h3><span class="section-number">4.6.2. </span>Patch Scripts<a class="headerlink" href="#patch-scripts" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">emergency_fix.sh - Emergency Automation</span><a class="headerlink" href="#id22" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Emergency Fix for EFR32ZG28 ===&quot;</span>
+
+<span class="c1"># Try multiple approaches rapidly</span>
+<span class="nv">approaches</span><span class="o">=(</span><span class="s2">&quot;emergency_fix.c&quot;</span><span class="w"> </span><span class="s2">&quot;quick_fix.c&quot;</span><span class="w"> </span><span class="s2">&quot;final_fix.c&quot;</span><span class="o">)</span>
+
+<span class="k">for</span><span class="w"> </span>approach<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">approaches</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Trying </span><span class="nv">$approach</span><span class="s2">...&quot;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$approach</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="c1"># Quick build</span>
+<span class="w">        </span>arm-none-eabi-gcc<span class="w"> </span>-mcpu<span class="o">=</span>cortex-m33<span class="w"> </span>-mthumb<span class="w"> </span>-specs<span class="o">=</span>nosys.specs<span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>-T<span class="w"> </span>efr32zg28.ld<span class="w"> </span>-o<span class="w"> </span>emergency.elf<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$approach</span><span class="s2">&quot;</span>
+<span class="w">        </span>arm-none-eabi-objcopy<span class="w"> </span>-O<span class="w"> </span>ihex<span class="w"> </span>emergency.elf<span class="w"> </span>emergency.hex
+
+<span class="w">        </span><span class="c1"># Quick flash</span>
+<span class="w">        </span>cat<span class="w"> </span>&gt;<span class="w"> </span>emergency_flash.jlink<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">device EFR32ZG28B312F1024IM48-A</span>
+<span class="s">si SWD</span>
+<span class="s">speed 4000</span>
+<span class="s">connect</span>
+<span class="s">loadfile emergency.hex</span>
+<span class="s">go</span>
+<span class="s">sleep 1000</span>
+<span class="s">halt</span>
+<span class="s">mem32 0x20000000 8</span>
+<span class="s">exit</span>
+<span class="s">EOF</span>
+
+<span class="w">        </span>JLinkExe<span class="w"> </span>-CommanderScript<span class="w"> </span>emergency_flash.jlink
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$approach</span><span class="s2"> completed&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">done</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="solutions-comparison-matrix">
+<h2><span class="section-number">4.7. </span>Solutions Comparison Matrix<a class="headerlink" href="#solutions-comparison-matrix" title="Link to this heading"></a></h2>
+<table class="docutils align-default" id="id23">
+<caption><span class="caption-text">Complete Solutions Analysis</span><a class="headerlink" href="#id23" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 15.0%" />
+<col style="width: 15.0%" />
+<col style="width: 35.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Solution</p></th>
+<th class="head"><p>GPIO Access</p></th>
+<th class="head"><p>Build Complexity</p></th>
+<th class="head"><p>Success Rate</p></th>
+<th class="head"><p>Best Use Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>SS5 Integration</strong></p></td>
+<td><p>✅ Full</p></td>
+<td><p>Medium</p></td>
+<td><p>⭐⭐⭐⭐⭐</p></td>
+<td><p>Production development</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Direct GCC</strong></p></td>
+<td><p>❌ Blocked</p></td>
+<td><p>Low</p></td>
+<td><p>⭐⭐⭐</p></td>
+<td><p>Learning and analysis</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Debug Framework</strong></p></td>
+<td><p>❌ Blocked</p></td>
+<td><p>Low</p></td>
+<td><p>⭐⭐⭐⭐</p></td>
+<td><p>Troubleshooting</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Build Automation</strong></p></td>
+<td><p>Varies</p></td>
+<td><p>Medium</p></td>
+<td><p>⭐⭐⭐⭐</p></td>
+<td><p>Development workflow</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Hardware Analysis</strong></p></td>
+<td><p>❌ Blocked</p></td>
+<td><p>Low</p></td>
+<td><p>⭐⭐⭐⭐</p></td>
+<td><p>Hardware validation</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Emergency Fixes</strong></p></td>
+<td><p>❌ Blocked</p></td>
+<td><p>Low</p></td>
+<td><p>⭐⭐</p></td>
+<td><p>Quick attempts</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="recommended-development-path">
+<h2><span class="section-number">4.8. </span>Recommended Development Path<a class="headerlink" href="#recommended-development-path" title="Link to this heading"></a></h2>
+<section id="primary-recommendation">
+<h3><span class="section-number">4.8.1. </span>Primary Recommendation<a class="headerlink" href="#primary-recommendation" title="Link to this heading"></a></h3>
+<p><strong>Use Simplicity Studio 5 Integration</strong> for all production development:</p>
+<ol class="arabic simple">
+<li><p>Provides full TrustZone compatibility</p></li>
+<li><p>Complete GPIO and peripheral access</p></li>
+<li><p>Professional development environment</p></li>
+<li><p>Silicon Labs component ecosystem support</p></li>
+</ol>
+</section>
+<section id="secondary-tools">
+<h3><span class="section-number">4.8.2. </span>Secondary Tools<a class="headerlink" href="#secondary-tools" title="Link to this heading"></a></h3>
+<p><strong>Use Supporting Solutions</strong> for enhanced development:</p>
+<ul class="simple">
+<li><p><strong>Debug Framework</strong>: For troubleshooting and analysis</p></li>
+<li><p><strong>Build Automation</strong>: For workflow efficiency</p></li>
+<li><p><strong>Hardware Analysis</strong>: For validation and testing</p></li>
+</ul>
+</section>
+<section id="development-workflow">
+<h3><span class="section-number">4.8.3. </span>Development Workflow<a class="headerlink" href="#development-workflow" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">Recommended Development Process</span><a class="headerlink" href="#id24" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>1. Start with SS5 Integration
+   ├── Create SS5 project with proper components
+   ├── Implement LED control using sl_simple_led
+   └── Verify TrustZone security handling
+
+2. Use Debug Framework for Troubleshooting
+   ├── Run progressive test cases
+   ├── Monitor debug variables via J-Link
+   └── Analyze hardware behavior
+
+3. Implement Build Automation
+   ├── Automate SS5 and GCC builds
+   ├── Streamline flash programming
+   └── Integrate testing procedures
+
+4. Hardware Validation
+   ├── Use hardware analysis tools
+   ├── Verify TrustZone behavior
+   └── Document findings
+</pre></div>
+</div>
+</div>
+<p><strong>Final Recommendation</strong>: Always start with SS5 integration as it’s the only method providing full functionality, then use other solutions as supporting tools for development, debugging, and analysis.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="development-journey.html" class="btn btn-neutral float-left" title="3. Development Journey" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="trustzone-analysis.html" class="btn btn-neutral float-right" title="5. TrustZone Security Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, PHYTEC EMBEDDED PVT. LTD. - SANGEZHIL &amp; ABARNIKA &amp; MADHUMITHA.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

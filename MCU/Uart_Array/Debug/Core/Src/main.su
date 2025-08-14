@@ -1,0 +1,8 @@
+../Core/Src/main.c:67:6:serialize_sensor_data	24	static
+../Core/Src/main.c:78:6:fill_dummy_data	16	static
+../Core/Src/main.c:93:5:main	120	static
+../Core/Src/main.c:146:6:SystemClock_Config	88	static
+../Core/Src/main.c:188:13:MX_USART2_UART_Init	8	static
+../Core/Src/main.c:215:6:send_serialized_data	72	static
+../Core/Src/main.c:226:13:MX_GPIO_Init	24	static
+../Core/Src/main.c:244:6:Error_Handler	4	static,ignoring_inline_asm

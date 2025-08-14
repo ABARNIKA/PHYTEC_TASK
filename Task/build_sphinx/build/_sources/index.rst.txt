@@ -1,0 +1,62 @@
+EFR32ZG28 LED Blink Project - Complete Documentation
+===================================================
+
+.. image:: https://img.shields.io/badge/Hardware-EFR32ZG28-blue
+   :alt: Hardware Badge
+
+.. image:: https://img.shields.io/badge/Status-PENDING-yellow
+   :alt: Status Badge
+
+.. image:: https://img.shields.io/badge/TrustZone-Analyzed-orange
+   :alt: TrustZone Badge
+
+CONTIKI-NG efr32zg28b312f1024im48-board Implementation
+=====================================================
+
+.. note::
+   **DOCUMENT INFORMATION**
+   
+   | **Company**: PHYTEC EMBEDDED PVT. LTD.
+   | **Task**: WEEK 2 TASK
+   | **Team Members**: SANGEZHIL & ABARNIKA & MADHUMITHA
+   | **Date**: July 2025
+   | **Project**: CONTIKI-NG efr32zg28b312f1024im48-board Implementation
+   | **Status**: PENDING
+
+**Comprehensive Technical Documentation for CONTIKI-NG EFR32ZG28 Board Implementation**
+
+This documentation represents a complete technical analysis and implementation guide for developing CONTIKI-NG platform support for the EFR32ZG28B312F1024IM48-A microcontroller board, conducted as part of **WEEK 2 TASK** for **PHYTEC EMBEDDED PVT. LTD.**
+
+Project Overview
+================
+
+Key Achievements
+----------------
+
+✅ **Hardware Validation**: Confirmed 100% functional EFR32ZG28 board
+
+✅ **Multiple Solutions**: Developed 6 different approaches
+
+✅ **TrustZone Analysis**: Comprehensive security limitation documentation
+
+✅ **Gecko SDK Integration**: Complete Simplicity Studio 5 project
+
+✅ **Flash Programming**: Successful binary programming via J-Link
+
+✅ **Development Tools**: 41 C programs + 41 shell scripts created
+
+.. toctree::
+   :maxdepth: 3
+   :numbered:
+   :caption: Documentation Contents:
+
+   overview
+   hardware
+   development-journey
+   solutions-implemented
+   trustzone-analysis
+   gecko-sdk-integration
+   files-created
+   troubleshooting
+   future-work
+

@@ -1,0 +1,581 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EFR32ZG28 LED Blink Project - Complete Documentation &mdash; CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=2709fde1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1. Project Overview" href="overview.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Project Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">2. Hardware Specifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development-journey.html">3. Development Journey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solutions-implemented.html">4. Solutions Implemented</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trustzone-analysis.html">5. TrustZone Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gecko-sdk-integration.html">6. Gecko SDK Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files-created.html">7. Files Created</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">8. Troubleshooting Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="future-work.html">9. Future Work and Recommendations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">EFR32ZG28 LED Blink Project - Complete Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/contiki-ng/contiki-ng/blob/develop/examples/efr32zg28-led-blink/source/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="efr32zg28-led-blink-project-complete-documentation">
+<h1>EFR32ZG28 LED Blink Project - Complete Documentation<a class="headerlink" href="#efr32zg28-led-blink-project-complete-documentation" title="Link to this heading"></a></h1>
+<img alt="Hardware Badge" src="https://img.shields.io/badge/Hardware-EFR32ZG28-blue" />
+<img alt="Status Badge" src="https://img.shields.io/badge/Status-PENDING-yellow" />
+<img alt="TrustZone Badge" src="https://img.shields.io/badge/TrustZone-Analyzed-orange" />
+</section>
+<section id="contiki-ng-efr32zg28b312f1024im48-board-implementation">
+<h1>CONTIKI-NG efr32zg28b312f1024im48-board Implementation<a class="headerlink" href="#contiki-ng-efr32zg28b312f1024im48-board-implementation" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>DOCUMENT INFORMATION</strong></p>
+<div class="line-block">
+<div class="line"><strong>Company</strong>: PHYTEC EMBEDDED PVT. LTD.</div>
+<div class="line"><strong>Task</strong>: WEEK 2 TASK</div>
+<div class="line"><strong>Team Members</strong>: SANGEZHIL &amp; ABARNIKA &amp; MADHUMITHA</div>
+<div class="line"><strong>Date</strong>: July 2025</div>
+<div class="line"><strong>Project</strong>: CONTIKI-NG efr32zg28b312f1024im48-board Implementation</div>
+<div class="line"><strong>Status</strong>: PENDING</div>
+</div>
+</div>
+<p><strong>Comprehensive Technical Documentation for CONTIKI-NG EFR32ZG28 Board Implementation</strong></p>
+<p>This documentation represents a complete technical analysis and implementation guide for developing CONTIKI-NG platform support for the EFR32ZG28B312F1024IM48-A microcontroller board, conducted as part of <strong>WEEK 2 TASK</strong> for <strong>PHYTEC EMBEDDED PVT. LTD.</strong></p>
+</section>
+<section id="project-overview">
+<h1>Project Overview<a class="headerlink" href="#project-overview" title="Link to this heading"></a></h1>
+<section id="key-achievements">
+<h2>Key Achievements<a class="headerlink" href="#key-achievements" title="Link to this heading"></a></h2>
+<p>✅ <strong>Hardware Validation</strong>: Confirmed 100% functional EFR32ZG28 board</p>
+<p>✅ <strong>Multiple Solutions</strong>: Developed 6 different approaches</p>
+<p>✅ <strong>TrustZone Analysis</strong>: Comprehensive security limitation documentation</p>
+<p>✅ <strong>Gecko SDK Integration</strong>: Complete Simplicity Studio 5 project</p>
+<p>✅ <strong>Flash Programming</strong>: Successful binary programming via J-Link</p>
+<p>✅ <strong>Development Tools</strong>: 41 C programs + 41 shell scripts created</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Documentation Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Project Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#project-summary">1.1. Project Summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#target-device">1.1.1. Target Device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#development-board">1.1.2. Development Board</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#key-technical-challenges">1.2. Key Technical Challenges</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#trustzone-security-extension">1.2.1. TrustZone Security Extension</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#project-objectives">1.3. Project Objectives</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#primary-goals">1.3.1. Primary Goals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#secondary-goals">1.3.2. Secondary Goals</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#development-approach">1.4. Development Approach</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#multiple-solution-strategy">1.4.1. Multiple Solution Strategy</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#results-summary">1.5. Results Summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#success-metrics">1.5.1. Success Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="overview.html#critical-findings">1.5.2. Critical Findings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#project-legacy">1.6. Project Legacy</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">2. Hardware Specifications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hardware.html#target-device">2.1. Target Device</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#efr32zg28b312f1024im48-a">2.1.1. EFR32ZG28B312F1024IM48-A</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hardware.html#development-board">2.2. Development Board</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#brd2705a-rev-a02">2.2.1. BRD2705A Rev. A02</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hardware.html#hardware-verification-results">2.3. Hardware Verification Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#comprehensive-testing">2.3.1. Comprehensive Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#j-link-debugger-analysis">2.3.2. J-Link Debugger Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#memory-map-verification">2.3.3. Memory Map Verification</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hardware.html#gpio-hardware-layout">2.4. GPIO Hardware Layout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#led-configuration">2.4.1. LED Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#button-configuration">2.4.2. Button Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hardware.html#clock-system-analysis">2.5. Clock System Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#crystal-oscillator">2.5.1. Crystal Oscillator</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hardware.html#power-management">2.6. Power Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#power-domains">2.6.1. Power Domains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#low-power-modes">2.6.2. Low Power Modes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hardware.html#hardware-quality-assessment">2.7. Hardware Quality Assessment</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#build-quality">2.7.1. Build Quality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#reliability-testing">2.7.2. Reliability Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hardware.html#hardware-limitations">2.8. Hardware Limitations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#known-restrictions">2.8.1. Known Restrictions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hardware.html#recommended-usage">2.8.2. Recommended Usage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development-journey.html">3. Development Journey</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="development-journey.html#phase-1-initial-contiki-ng-integration">3.1. Phase 1: Initial Contiki-NG Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#objective">3.1.1. Objective</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#approach">3.1.2. Approach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#challenges-encountered">3.1.3. Challenges Encountered</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#results">3.1.4. Results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#files-created">3.1.5. Files Created</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="development-journey.html#phase-2-bare-metal-solutions">3.2. Phase 2: Bare Metal Solutions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#id1">3.2.1. Objective</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#multiple-approaches">3.2.2. Multiple Approaches</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#results-analysis">3.2.3. Results Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#key-insights">3.2.4. Key Insights</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#id2">3.2.5. Files Created</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="development-journey.html#phase-3-trustzone-security-analysis">3.3. Phase 3: TrustZone Security Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#id3">3.3.1. Objective</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#security-investigation">3.3.2. Security Investigation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#bypass-attempts">3.3.3. Bypass Attempts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#results-summary">3.3.4. Results Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#critical-finding">3.3.5. Critical Finding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#id4">3.3.6. Files Created</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="development-journey.html#phase-4-silicon-labs-ecosystem-integration">3.4. Phase 4: Silicon Labs Ecosystem Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#id5">3.4.1. Objective</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#simplicity-studio-5-project">3.4.2. Simplicity Studio 5 Project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#success-metrics">3.4.3. Success Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#technical-analysis">3.4.4. Technical Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#id6">3.4.5. Files Created</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="development-journey.html#phase-5-comprehensive-testing-and-validation">3.5. Phase 5: Comprehensive Testing and Validation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#id7">3.5.1. Objective</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#progressive-testing-strategy">3.5.2. Progressive Testing Strategy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#comprehensive-debugging-scripts">3.5.3. Comprehensive Debugging Scripts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#results-compilation">3.5.4. Results Compilation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#id8">3.5.5. Files Created</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="development-journey.html#development-journey-summary">3.6. Development Journey Summary</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#key-learnings">3.6.1. Key Learnings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#timeline-overview">3.6.2. Timeline Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="development-journey.html#id9">3.6.3. Success Metrics</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="solutions-implemented.html">4. Solutions Implemented</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="solutions-implemented.html#solution-1-simplicity-studio-5-integration-recommended">4.1. Solution 1: Simplicity Studio 5 Integration (RECOMMENDED)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#overview">4.1.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#project-structure">4.1.2. Project Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#component-configuration">4.1.3. Component Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#main-application">4.1.4. Main Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#led-control-implementation">4.1.5. LED Control Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#trustzone-integration">4.1.6. TrustZone Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#build-and-flash-process">4.1.7. Build and Flash Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#features-achieved">4.1.8. Features Achieved</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solutions-implemented.html#solution-2-direct-gcc-build-and-flash">4.2. Solution 2: Direct GCC Build and Flash</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#id1">4.2.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#minimal-implementation">4.2.2. Minimal Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#build-system">4.2.3. Build System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#linker-script">4.2.4. Linker Script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#results-analysis">4.2.5. Results Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solutions-implemented.html#solution-3-comprehensive-debugging-framework">4.3. Solution 3: Comprehensive Debugging Framework</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#id2">4.3.1. Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#progressive-test-cases">4.3.2. Progressive Test Cases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#automated-analysis-tools">4.3.3. Automated Analysis Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#debug-session-analysis">4.3.4. Debug Session Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solutions-implemented.html#solution-4-automated-build-systems">4.4. Solution 4: Automated Build Systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#complete-build-automation">4.4.1. Complete Build Automation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solutions-implemented.html#solution-5-hardware-analysis-tools">4.5. Solution 5: Hardware Analysis Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#j-link-debugging-suite">4.5.1. J-Link Debugging Suite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#trustzone-analysis-tool">4.5.2. TrustZone Analysis Tool</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solutions-implemented.html#solution-6-emergency-fixes-and-patches">4.6. Solution 6: Emergency Fixes and Patches</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#quick-fix-implementations">4.6.1. Quick Fix Implementations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#patch-scripts">4.6.2. Patch Scripts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solutions-implemented.html#solutions-comparison-matrix">4.7. Solutions Comparison Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solutions-implemented.html#recommended-development-path">4.8. Recommended Development Path</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#primary-recommendation">4.8.1. Primary Recommendation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#secondary-tools">4.8.2. Secondary Tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solutions-implemented.html#development-workflow">4.8.3. Development Workflow</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="trustzone-analysis.html">5. TrustZone Security Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="trustzone-analysis.html#trustzone-architecture-overview">5.1. TrustZone Architecture Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#arm-cortex-m33-security-extension">5.1.1. ARM Cortex-M33 Security Extension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#security-management-unit-smu">5.1.2. Security Management Unit (SMU)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="trustzone-analysis.html#security-features-identified">5.2. Security Features Identified</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#peripheral-protection-analysis">5.2.1. Peripheral Protection Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#detailed-register-analysis">5.2.2. Detailed Register Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="trustzone-analysis.html#security-state-analysis">5.3. Security State Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#trustzone-security-states">5.3.1. TrustZone Security States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#security-attribution-configuration">5.3.2. Security Attribution Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#runtime-security-analysis">5.3.3. Runtime Security Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="trustzone-analysis.html#trustzone-bypass-attempts">5.4. TrustZone Bypass Attempts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#method-1-smu-configuration-manipulation">5.4.1. Method 1: SMU Configuration Manipulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#method-2-security-state-switching">5.4.2. Method 2: Security State Switching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#method-3-direct-register-override">5.4.3. Method 3: Direct Register Override</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#method-4-clock-domain-manipulation">5.4.4. Method 4: Clock Domain Manipulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#method-5-debug-interface-exploitation">5.4.5. Method 5: Debug Interface Exploitation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#method-6-boot-sequence-manipulation">5.4.6. Method 6: Boot Sequence Manipulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#bypass-attempt-results-summary">5.4.7. Bypass Attempt Results Summary</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="trustzone-analysis.html#critical-security-finding">5.5. Critical Security Finding</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#technical-explanation">5.5.1. Technical Explanation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="trustzone-analysis.html#silicon-labs-security-implementation">5.6. Silicon Labs Security Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#proprietary-security-framework">5.6.1. Proprietary Security Framework</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#authorized-access-methods">5.6.2. Authorized Access Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#working-solution-analysis">5.6.3. Working Solution Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="trustzone-analysis.html#security-implications-for-development">5.7. Security Implications for Development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#development-strategy-impact">5.7.1. Development Strategy Impact</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#best-practices-for-trustzone-development">5.7.2. Best Practices for TrustZone Development</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#future-security-considerations">5.7.3. Future Security Considerations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="trustzone-analysis.html#conclusion-trustzone-reality">5.8. Conclusion: TrustZone Reality</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#key-findings">5.8.1. Key Findings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trustzone-analysis.html#practical-implications">5.8.2. Practical Implications</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gecko-sdk-integration.html">6. Gecko SDK Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gecko-sdk-integration.html#latest-gecko-sdk-checkout">6.1. Latest Gecko SDK Checkout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#method-1-simplicity-studio-5-recommended">6.1.1. Method 1: Simplicity Studio 5 (Recommended)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#method-2-git-repository-checkout">6.1.2. Method 2: Git Repository Checkout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#method-3-direct-download">6.1.3. Method 3: Direct Download</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#method-4-commander-cli">6.1.4. Method 4: Commander CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gecko-sdk-integration.html#gecko-sdk-version-compatibility">6.2. Gecko SDK Version Compatibility</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#efr32zg28-support-matrix">6.2.1. EFR32ZG28 Support Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#version-verification">6.2.2. Version Verification</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gecko-sdk-integration.html#component-system-integration">6.3. Component System Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#slc-silicon-labs-configurator-overview">6.3.1. SLC (Silicon Labs Configurator) Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#essential-components-for-efr32zg28">6.3.2. Essential Components for EFR32ZG28</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gecko-sdk-integration.html#efr32zg28-project-configuration">6.4. EFR32ZG28 Project Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#complete-project-setup">6.4.1. Complete Project Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#component-configuration-files">6.4.2. Component Configuration Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gecko-sdk-integration.html#contiki-ng-integration-patterns">6.5. Contiki-NG Integration Patterns</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#hybrid-application-architecture">6.5.1. Hybrid Application Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#main-application-implementation">6.5.2. Main Application Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#application-layer-implementation">6.5.3. Application Layer Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#contiki-ng-process-integration">6.5.4. Contiki-NG Process Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gecko-sdk-integration.html#build-system-integration">6.6. Build System Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#slc-build-process">6.6.1. SLC Build Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#generated-makefile-analysis">6.6.2. Generated Makefile Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#manual-build-integration">6.6.3. Manual Build Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gecko-sdk-integration.html#integration-best-practices">6.7. Integration Best Practices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#component-selection-guidelines">6.7.1. Component Selection Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#security-integration">6.7.2. Security Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#performance-optimization">6.7.3. Performance Optimization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gecko-sdk-integration.html#troubleshooting-integration-issues">6.8. Troubleshooting Integration Issues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#common-integration-problems">6.8.1. Common Integration Problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#integration-verification">6.8.2. Integration Verification</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gecko-sdk-integration.html#summary-gecko-sdk-integration-success-factors">6.9. Summary: Gecko SDK Integration Success Factors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gecko-sdk-integration.html#critical-success-factors">6.9.1. Critical Success Factors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="files-created.html">7. Files Created</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="files-created.html#project-statistics">7.1. Project Statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="files-created.html#source-code-files-41-files">7.2. Source Code Files (41 files)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#contiki-ng-integration-files">7.2.1. Contiki-NG Integration Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#bare-metal-solutions">7.2.2. Bare Metal Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#silicon-labs-style-implementations">7.2.3. Silicon Labs Style Implementations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#trustzone-analysis-files">7.2.4. TrustZone Analysis Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#debug-and-test-programs">7.2.5. Debug and Test Programs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#working-solutions">7.2.6. Working Solutions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#emergency-and-quick-fixes">7.2.7. Emergency and Quick Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#enhanced-implementations">7.2.8. Enhanced Implementations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#system-integration-files">7.2.9. System Integration Files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="files-created.html#shell-scripts-41-files">7.3. Shell Scripts (41 files)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#main-build-and-flash-scripts">7.3.1. Main Build and Flash Scripts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#debugging-and-analysis-scripts">7.3.2. Debugging and Analysis Scripts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#hardware-validation-scripts">7.3.3. Hardware Validation Scripts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#solution-implementation-scripts">7.3.4. Solution Implementation Scripts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#flash-programming-scripts">7.3.5. Flash Programming Scripts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#monitoring-and-testing-scripts">7.3.6. Monitoring and Testing Scripts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#build-system-scripts">7.3.7. Build System Scripts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#utility-and-emergency-scripts">7.3.8. Utility and Emergency Scripts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="files-created.html#documentation-files-10-files">7.4. Documentation Files (10 files)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#primary-documentation">7.4.1. Primary Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#specialized-guides">7.4.2. Specialized Guides</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#status-and-solution-documentation">7.4.3. Status and Solution Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="files-created.html#configuration-files-15-files">7.5. Configuration Files (15 files)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#build-configuration">7.5.1. Build Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#linker-scripts">7.5.2. Linker Scripts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#ss5-project-files">7.5.3. SS5 Project Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#j-link-scripts">7.5.4. J-Link Scripts</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="files-created.html#generated-binaries-8-files">7.6. Generated Binaries (8 files)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#working-binaries">7.6.1. Working Binaries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#debug-binaries">7.6.2. Debug Binaries</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="files-created.html#file-organization-structure">7.7. File Organization Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#project-directory-layout">7.7.1. Project Directory Layout</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="files-created.html#file-size-and-complexity-analysis">7.8. File Size and Complexity Analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#size-distribution">7.8.1. Size Distribution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#complexity-metrics">7.8.2. Complexity Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#quality-metrics">7.8.3. Quality Metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="files-created.html#file-relationships-and-dependencies">7.9. File Relationships and Dependencies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#dependency-matrix">7.9.1. Dependency Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#usage-patterns">7.9.2. Usage Patterns</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="files-created.html#file-maintenance-strategy">7.10. File Maintenance Strategy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#version-control">7.10.1. Version Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#backup-strategy">7.10.2. Backup Strategy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#documentation-maintenance">7.10.3. Documentation Maintenance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="files-created.html#file-archival-and-legacy">7.11. File Archival and Legacy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#historical-value">7.11.1. Historical Value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#knowledge-preservation">7.11.2. Knowledge Preservation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="files-created.html#future-development">7.11.3. Future Development</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">8. Troubleshooting Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#hardware-troubleshooting">8.1. Hardware Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#board-connection-issues">8.1.1. Board Connection Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#power-and-clock-issues">8.1.2. Power and Clock Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#software-troubleshooting">8.2. Software Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#build-system-issues">8.2.1. Build System Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#trustzone-and-security-issues">8.2.2. TrustZone and Security Issues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#ss5-integration-issues">8.2.3. SS5 Integration Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#progressive-debugging-methodology">8.3. Progressive Debugging Methodology</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#systematic-troubleshooting-approach">8.3.1. Systematic Troubleshooting Approach</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#common-error-patterns-and-solutions">8.4. Common Error Patterns and Solutions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#error-pattern-matrix">8.4.1. Error Pattern Matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#automated-troubleshooting-tools">8.5. Automated Troubleshooting Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#ultimate-troubleshooting-script">8.5.1. Ultimate Troubleshooting Script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#debug-variable-monitoring">8.5.2. Debug Variable Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#emergency-recovery-procedures">8.6. Emergency Recovery Procedures</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#system-recovery">8.6.1. System Recovery</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#expert-level-troubleshooting">8.7. Expert-Level Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#advanced-debugging-techniques">8.7.1. Advanced Debugging Techniques</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#troubleshooting-decision-tree">8.8. Troubleshooting Decision Tree</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#problem-classification">8.8.1. Problem Classification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#resolution-priority">8.8.2. Resolution Priority</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#support-resources">8.9. Support Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#documentation-references">8.9.1. Documentation References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#community-support">8.9.2. Community Support</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="future-work.html">9. Future Work and Recommendations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="future-work.html#immediate-next-steps">9.1. Immediate Next Steps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#short-term-development-goals-1-3-months">9.1.1. Short-term Development Goals (1-3 months)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#medium-term-development-goals-3-12-months">9.1.2. Medium-term Development Goals (3-12 months)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="future-work.html#long-term-vision-1-3-years">9.2. Long-term Vision (1-3 years)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#research-and-development-initiatives">9.2.1. Research and Development Initiatives</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="future-work.html#technical-recommendations">9.3. Technical Recommendations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#architecture-recommendations">9.3.1. Architecture Recommendations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#industry-integration-recommendations">9.3.2. Industry Integration Recommendations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="future-work.html#open-source-contributions">9.4. Open Source Contributions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#planned-contributions">9.4.1. Planned Contributions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="future-work.html#research-publication-plan">9.5. Research Publication Plan</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#academic-publications">9.5.1. Academic Publications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#industry-publications">9.5.2. Industry Publications</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="future-work.html#community-engagement-strategy">9.6. Community Engagement Strategy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#developer-community-building">9.6.1. Developer Community Building</a></li>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#collaboration-opportunities">9.6.2. Collaboration Opportunities</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="future-work.html#success-metrics-and-evaluation">9.7. Success Metrics and Evaluation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#technical-success-metrics">9.7.1. Technical Success Metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#impact-assessment">9.7.2. Impact Assessment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="future-work.html#conclusion-future-vision">9.8. Conclusion: Future Vision</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#strategic-vision">9.8.1. Strategic Vision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="future-work.html#long-term-impact-goals">9.8.2. Long-term Impact Goals</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="overview.html" class="btn btn-neutral float-right" title="1. Project Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, PHYTEC EMBEDDED PVT. LTD. - SANGEZHIL &amp; ABARNIKA &amp; MADHUMITHA.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

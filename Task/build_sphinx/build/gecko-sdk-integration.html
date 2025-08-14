@@ -1,0 +1,1086 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6. Gecko SDK Integration &mdash; CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=2709fde1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="7. Files Created" href="files-created.html" />
+    <link rel="prev" title="5. TrustZone Security Analysis" href="trustzone-analysis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">1. Project Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware.html">2. Hardware Specifications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development-journey.html">3. Development Journey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solutions-implemented.html">4. Solutions Implemented</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trustzone-analysis.html">5. TrustZone Security Analysis</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. Gecko SDK Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#latest-gecko-sdk-checkout">6.1. Latest Gecko SDK Checkout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#method-1-simplicity-studio-5-recommended">6.1.1. Method 1: Simplicity Studio 5 (Recommended)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#package-manager-benefits">6.1.1.1. Package Manager Benefits</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#method-2-git-repository-checkout">6.1.2. Method 2: Git Repository Checkout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#method-3-direct-download">6.1.3. Method 3: Direct Download</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#method-4-commander-cli">6.1.4. Method 4: Commander CLI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#gecko-sdk-version-compatibility">6.2. Gecko SDK Version Compatibility</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#efr32zg28-support-matrix">6.2.1. EFR32ZG28 Support Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#version-verification">6.2.2. Version Verification</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#component-system-integration">6.3. Component System Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#slc-silicon-labs-configurator-overview">6.3.1. SLC (Silicon Labs Configurator) Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#essential-components-for-efr32zg28">6.3.2. Essential Components for EFR32ZG28</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#device-initialization-components">6.3.2.1. Device Initialization Components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#power-management-components">6.3.2.2. Power Management Components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gpio-and-led-components">6.3.2.3. GPIO and LED Components</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#system-and-debug-components">6.3.2.4. System and Debug Components</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#efr32zg28-project-configuration">6.4. EFR32ZG28 Project Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#complete-project-setup">6.4.1. Complete Project Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#component-configuration-files">6.4.2. Component Configuration Files</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#led-configuration">6.4.2.1. LED Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clock-configuration">6.4.2.2. Clock Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uart-configuration">6.4.2.3. UART Configuration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#contiki-ng-integration-patterns">6.5. Contiki-NG Integration Patterns</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hybrid-application-architecture">6.5.1. Hybrid Application Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main-application-implementation">6.5.2. Main Application Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#application-layer-implementation">6.5.3. Application Layer Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#contiki-ng-process-integration">6.5.4. Contiki-NG Process Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#build-system-integration">6.6. Build System Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#slc-build-process">6.6.1. SLC Build Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generated-makefile-analysis">6.6.2. Generated Makefile Analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#manual-build-integration">6.6.3. Manual Build Integration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#integration-best-practices">6.7. Integration Best Practices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#component-selection-guidelines">6.7.1. Component Selection Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#security-integration">6.7.2. Security Integration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-optimization">6.7.3. Performance Optimization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-integration-issues">6.8. Troubleshooting Integration Issues</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#common-integration-problems">6.8.1. Common Integration Problems</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#component-not-found">6.8.1.1. Component Not Found</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#build-failures">6.8.1.2. Build Failures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#memory-errors">6.8.1.3. Memory Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#integration-verification">6.8.2. Integration Verification</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#summary-gecko-sdk-integration-success-factors">6.9. Summary: Gecko SDK Integration Success Factors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#critical-success-factors">6.9.1. Critical Success Factors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="files-created.html">7. Files Created</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">8. Troubleshooting Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="future-work.html">9. Future Work and Recommendations</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CONTIKI-NG efr32zg28b312f1024im48-board Implementation - PHYTEC EMBEDDED PVT. LTD.</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6. </span>Gecko SDK Integration</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/contiki-ng/contiki-ng/blob/develop/examples/efr32zg28-led-blink/source/gecko-sdk-integration.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gecko-sdk-integration">
+<h1><span class="section-number">6. </span>Gecko SDK Integration<a class="headerlink" href="#gecko-sdk-integration" title="Link to this heading"></a></h1>
+<p>This section covers the complete integration with Silicon Labs Gecko SDK, including latest version checkout, component system usage, and Contiki-NG integration patterns.</p>
+<section id="latest-gecko-sdk-checkout">
+<h2><span class="section-number">6.1. </span>Latest Gecko SDK Checkout<a class="headerlink" href="#latest-gecko-sdk-checkout" title="Link to this heading"></a></h2>
+<section id="method-1-simplicity-studio-5-recommended">
+<h3><span class="section-number">6.1.1. </span>Method 1: Simplicity Studio 5 (Recommended)<a class="headerlink" href="#method-1-simplicity-studio-5-recommended" title="Link to this heading"></a></h3>
+<p>The most reliable method to get the latest Gecko SDK is through Simplicity Studio 5:</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">SS5 Installation and SDK Setup</span><a class="headerlink" href="#id1" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Download and install Simplicity Studio 5</span>
+<span class="c1"># Visit: https://www.silabs.com/developers/simplicity-studio</span>
+
+<span class="c1"># 2. Launch SS5 and access Package Manager</span>
+<span class="c1"># Tools → Simplicity Studio Package Manager</span>
+
+<span class="c1"># 3. Install latest Gecko SDK</span>
+<span class="c1"># Select &quot;Gecko SDK Suite&quot; → Install Latest Version</span>
+
+<span class="c1"># 4. Verify installation</span>
+<span class="c1"># The SDK will be installed to:</span>
+<span class="c1"># ~/.simplicity_studio/SDKs/gecko_sdk/</span>
+</pre></div>
+</div>
+</div>
+<section id="package-manager-benefits">
+<h4><span class="section-number">6.1.1.1. </span>Package Manager Benefits<a class="headerlink" href="#package-manager-benefits" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Automatic version compatibility checking</p></li>
+<li><p>Integrated component dependency resolution</p></li>
+<li><p>Hardware-specific optimizations</p></li>
+<li><p>Security key integration for TrustZone</p></li>
+<li><p>Direct tool integration</p></li>
+</ul>
+</section>
+</section>
+<section id="method-2-git-repository-checkout">
+<h3><span class="section-number">6.1.2. </span>Method 2: Git Repository Checkout<a class="headerlink" href="#method-2-git-repository-checkout" title="Link to this heading"></a></h3>
+<p>For manual installation or CI/CD integration:</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Git Repository Checkout</span><a class="headerlink" href="#id2" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clone the official Gecko SDK repository</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/SiliconLabs/gecko_sdk.git
+<span class="nb">cd</span><span class="w"> </span>gecko_sdk
+
+<span class="c1"># Checkout latest stable release</span>
+git<span class="w"> </span>fetch<span class="w"> </span>--tags
+<span class="nv">latest_tag</span><span class="o">=</span><span class="k">$(</span>git<span class="w"> </span>describe<span class="w"> </span>--tags<span class="w"> </span><span class="k">$(</span>git<span class="w"> </span>rev-list<span class="w"> </span>--tags<span class="w"> </span>--max-count<span class="o">=</span><span class="m">1</span><span class="k">))</span>
+git<span class="w"> </span>checkout<span class="w"> </span><span class="nv">$latest_tag</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Checked out Gecko SDK version: </span><span class="nv">$latest_tag</span><span class="s2">&quot;</span>
+
+<span class="c1"># Verify EFR32ZG28 support</span>
+find<span class="w"> </span>.<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*efr32zg28*&quot;</span><span class="w"> </span>-type<span class="w"> </span>f
+
+<span class="c1"># Expected output should include:</span>
+<span class="c1"># ./platform/Device/SiliconLabs/EFR32ZG28/</span>
+<span class="c1"># ./platform/radio/rail_lib/autogen/librail_efr32zg28_*.a</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="method-3-direct-download">
+<h3><span class="section-number">6.1.3. </span>Method 3: Direct Download<a class="headerlink" href="#method-3-direct-download" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Direct SDK Download</span><a class="headerlink" href="#id3" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download latest release</span>
+wget<span class="w"> </span>https://github.com/SiliconLabs/gecko_sdk/releases/latest/download/gecko_sdk.zip
+
+<span class="c1"># Extract to standard location</span>
+mkdir<span class="w"> </span>-p<span class="w"> </span>~/gecko_sdk
+unzip<span class="w"> </span>gecko_sdk.zip<span class="w"> </span>-d<span class="w"> </span>~/gecko_sdk
+
+<span class="c1"># Set environment variable</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GECKO_SDK_PATH</span><span class="o">=</span>~/gecko_sdk
+<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;export GECKO_SDK_PATH=~/gecko_sdk&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+</pre></div>
+</div>
+</div>
+</section>
+<section id="method-4-commander-cli">
+<h3><span class="section-number">6.1.4. </span>Method 4: Commander CLI<a class="headerlink" href="#method-4-commander-cli" title="Link to this heading"></a></h3>
+<p>Using Silicon Labs Commander for SDK management:</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Commander SDK Management</span><a class="headerlink" href="#id4" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install Commander (if not already installed)</span>
+<span class="c1"># Download from: https://www.silabs.com/developers/mcu-programming-options</span>
+
+<span class="c1"># List available SDKs</span>
+commander<span class="w"> </span>sdk<span class="w"> </span>list
+
+<span class="c1"># Install latest SDK</span>
+commander<span class="w"> </span>sdk<span class="w"> </span>install<span class="w"> </span>--latest
+
+<span class="c1"># Verify installation</span>
+commander<span class="w"> </span>sdk<span class="w"> </span>list<span class="w"> </span>--installed
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="gecko-sdk-version-compatibility">
+<h2><span class="section-number">6.2. </span>Gecko SDK Version Compatibility<a class="headerlink" href="#gecko-sdk-version-compatibility" title="Link to this heading"></a></h2>
+<section id="efr32zg28-support-matrix">
+<h3><span class="section-number">6.2.1. </span>EFR32ZG28 Support Matrix<a class="headerlink" href="#efr32zg28-support-matrix" title="Link to this heading"></a></h3>
+<table class="docutils align-default" id="gecko-sdk-versions">
+<caption><span class="caption-text">Gecko SDK Version Support</span><a class="headerlink" href="#gecko-sdk-versions" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+<col style="width: 20.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>SDK Version</p></th>
+<th class="head"><p>EFR32ZG28 Support</p></th>
+<th class="head"><p>TrustZone Support</p></th>
+<th class="head"><p>Recommended</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>v4.4.x</strong></p></td>
+<td><p>✅ Full</p></td>
+<td><p>✅ Complete</p></td>
+<td><p>⭐⭐⭐⭐⭐</p></td>
+<td><p>Latest stable, full feature support</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>v4.3.x</strong></p></td>
+<td><p>✅ Full</p></td>
+<td><p>✅ Complete</p></td>
+<td><p>⭐⭐⭐⭐</p></td>
+<td><p>Stable, well-tested</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>v4.2.x</strong></p></td>
+<td><p>⚠️ Limited</p></td>
+<td><p>⚠️ Partial</p></td>
+<td><p>⭐⭐⭐</p></td>
+<td><p>Basic support, some limitations</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>v4.1.x</strong></p></td>
+<td><p>❌ None</p></td>
+<td><p>❌ None</p></td>
+<td><p>❌</p></td>
+<td><p>No EFR32ZG28 support</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>v4.0.x</strong></p></td>
+<td><p>❌ None</p></td>
+<td><p>❌ None</p></td>
+<td><p>❌</p></td>
+<td><p>Legacy version</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="version-verification">
+<h3><span class="section-number">6.2.2. </span>Version Verification<a class="headerlink" href="#version-verification" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">SDK Version Check Script</span><a class="headerlink" href="#id5" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Gecko SDK Version Verification ===&quot;</span>
+
+<span class="c1"># Check SDK installation</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;SDK Path: </span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">&quot;</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ERROR: GECKO_SDK_PATH not set or directory not found&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># Check version file</span>
+<span class="nv">version_file</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">/version.txt&quot;</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$version_file</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;SDK Version: </span><span class="k">$(</span>cat<span class="w"> </span><span class="nv">$version_file</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="k">fi</span>
+
+<span class="c1"># Check EFR32ZG28 support</span>
+<span class="nv">zg28_path</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">/platform/Device/SiliconLabs/EFR32ZG28&quot;</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$zg28_path</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ EFR32ZG28 Support: Available&quot;</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Device variants:&quot;</span>
+<span class="w">    </span>ls<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$zg28_path</span><span class="s2">/Include/&quot;</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;❌ EFR32ZG28 Support: Not found&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># Check TrustZone components</span>
+<span class="nv">trustzone_components</span><span class="o">=</span><span class="k">$(</span>find<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">&quot;</span><span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*trustzone*&quot;</span><span class="w"> </span>-o<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*secure*&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;TrustZone Components: </span><span class="nv">$trustzone_components</span><span class="s2"> found&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="component-system-integration">
+<h2><span class="section-number">6.3. </span>Component System Integration<a class="headerlink" href="#component-system-integration" title="Link to this heading"></a></h2>
+<section id="slc-silicon-labs-configurator-overview">
+<h3><span class="section-number">6.3.1. </span>SLC (Silicon Labs Configurator) Overview<a class="headerlink" href="#slc-silicon-labs-configurator-overview" title="Link to this heading"></a></h3>
+<p>The SLC component system is central to Gecko SDK integration:</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">SLC Component Architecture</span><a class="headerlink" href="#id6" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────┐
+│                    Project (.slcp)                     │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
+│  │   Hardware  │  │  Drivers    │  │ Application │     │
+│  │ Components  │  │ Components  │  │ Components  │     │
+│  │             │  │             │  │             │     │
+│  │ • device_   │  │ • simple_   │  │ • contiki   │     │
+│  │   init      │  │   led       │  │   process   │     │
+│  │ • clock_    │  │ • gpio      │  │ • custom    │     │
+│  │   manager   │  │ • timer     │  │   app       │     │
+│  └─────────────┘  └─────────────┘  └─────────────┘     │
+│                                                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │             Security Components                     │ │
+│  │  • TrustZone initialization                        │ │
+│  │  • Peripheral security attribution                 │ │
+│  │  • Authenticated hardware access                   │ │
+│  └─────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+</div>
+</section>
+<section id="essential-components-for-efr32zg28">
+<h3><span class="section-number">6.3.2. </span>Essential Components for EFR32ZG28<a class="headerlink" href="#essential-components-for-efr32zg28" title="Link to this heading"></a></h3>
+<section id="device-initialization-components">
+<h4><span class="section-number">6.3.2.1. </span>Device Initialization Components<a class="headerlink" href="#device-initialization-components" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Core Device Components</span><a class="headerlink" href="#id7" title="Link to this code"></a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Device initialization with TrustZone support</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Essential</span><span class="nv"> </span><span class="s">TrustZone</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">system</span><span class="nv"> </span><span class="s">initialization&quot;</span>
+
+<span class="c1"># Clock system initialization</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init_hfxo</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;High-frequency</span><span class="nv"> </span><span class="s">crystal</span><span class="nv"> </span><span class="s">oscillator</span><span class="nv"> </span><span class="s">setup&quot;</span>
+
+<span class="c1"># Low-frequency clock (for timers)</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init_lfxo</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Low-frequency</span><span class="nv"> </span><span class="s">crystal</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">timer&quot;</span>
+
+<span class="c1"># HFRCO initialization (backup oscillator)</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init_hfrco</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;High-frequency</span><span class="nv"> </span><span class="s">RC</span><span class="nv"> </span><span class="s">oscillator</span><span class="nv"> </span><span class="s">backup&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="power-management-components">
+<h4><span class="section-number">6.3.2.2. </span>Power Management Components<a class="headerlink" href="#power-management-components" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Power Management Components</span><a class="headerlink" href="#id8" title="Link to this code"></a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Core power management</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">power_manager</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Energy-efficient</span><span class="nv"> </span><span class="s">power</span><span class="nv"> </span><span class="s">state</span><span class="nv"> </span><span class="s">management&quot;</span>
+
+<span class="c1"># Sleep timer for low-power operation</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">sleeptimer</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Low-power</span><span class="nv"> </span><span class="s">timing</span><span class="nv"> </span><span class="s">services&quot;</span>
+
+<span class="c1"># EMU (Energy Management Unit) support</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init_emu</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Energy</span><span class="nv"> </span><span class="s">management</span><span class="nv"> </span><span class="s">unit</span><span class="nv"> </span><span class="s">configuration&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="gpio-and-led-components">
+<h4><span class="section-number">6.3.2.3. </span>GPIO and LED Components<a class="headerlink" href="#gpio-and-led-components" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">GPIO and LED Components</span><a class="headerlink" href="#id9" title="Link to this code"></a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simple LED driver with TrustZone support</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">simple_led</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;TrustZone-aware</span><span class="nv"> </span><span class="s">LED</span><span class="nv"> </span><span class="s">control&quot;</span>
+<span class="w">  </span><span class="nt">instance</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">led1</span><span class="p p-Indicator">]</span>
+
+<span class="c1"># GPIO pin configuration</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">simple_button</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Button</span><span class="nv"> </span><span class="s">input</span><span class="nv"> </span><span class="s">handling&quot;</span>
+<span class="w">  </span><span class="nt">instance</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">btn0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">btn1</span><span class="p p-Indicator">]</span>
+
+<span class="c1"># Advanced GPIO services</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">gpiointerrupt</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;GPIO</span><span class="nv"> </span><span class="s">interrupt</span><span class="nv"> </span><span class="s">handling&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="system-and-debug-components">
+<h4><span class="section-number">6.3.2.4. </span>System and Debug Components<a class="headerlink" href="#system-and-debug-components" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">System Components</span><a class="headerlink" href="#id10" title="Link to this code"></a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Core system services</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">sl_system</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;System</span><span class="nv"> </span><span class="s">initialization</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">services&quot;</span>
+
+<span class="c1"># Debug and logging support</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">iostream_usart</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;UART-based</span><span class="nv"> </span><span class="s">debug</span><span class="nv"> </span><span class="s">output&quot;</span>
+<span class="w">  </span><span class="nt">instance</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">vcom</span><span class="p p-Indicator">]</span>
+
+<span class="c1"># Memory management</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">memory_manager</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Dynamic</span><span class="nv"> </span><span class="s">memory</span><span class="nv"> </span><span class="s">allocation&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="efr32zg28-project-configuration">
+<h2><span class="section-number">6.4. </span>EFR32ZG28 Project Configuration<a class="headerlink" href="#efr32zg28-project-configuration" title="Link to this heading"></a></h2>
+<section id="complete-project-setup">
+<h3><span class="section-number">6.4.1. </span>Complete Project Setup<a class="headerlink" href="#complete-project-setup" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text">efr32zg28_contiki.slcp - Complete Project Configuration</span><a class="headerlink" href="#id11" title="Link to this code"></a></div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">project_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">efr32zg28_contiki</span>
+<span class="nt">label</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EFR32ZG28 Contiki-NG LED Blink</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">  </span><span class="no">Complete EFR32ZG28 LED blink application integrating</span>
+<span class="w">  </span><span class="no">Contiki-NG with Gecko SDK components for TrustZone compatibility.</span>
+<span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Example</span>
+<span class="nt">package</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">platform</span>
+<span class="nt">quality</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+
+<span class="nt">filter</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Device Type</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">SoC</span><span class="p p-Indicator">]</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MCU</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">32-bit MCU</span><span class="p p-Indicator">]</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Project Difficulty</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Beginner</span><span class="p p-Indicator">]</span>
+
+<span class="nt">component</span><span class="p">:</span>
+<span class="c1"># Essential system components</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init</span><span class="p p-Indicator">}</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init_hfxo</span><span class="p p-Indicator">}</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">device_init_lfxo</span><span class="p p-Indicator">}</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">sl_system</span><span class="p p-Indicator">}</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">power_manager</span><span class="p p-Indicator">}</span>
+
+<span class="c1"># LED and GPIO components</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">simple_led</span><span class="p p-Indicator">,</span><span class="nt"> instance</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">led1</span><span class="p p-Indicator">]}</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">simple_button</span><span class="p p-Indicator">,</span><span class="nt"> instance</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">btn0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">btn1</span><span class="p p-Indicator">]}</span>
+
+<span class="c1"># Timing services</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">sleeptimer</span><span class="p p-Indicator">}</span>
+
+<span class="c1"># Debug support</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">iostream_usart</span><span class="p p-Indicator">,</span><span class="nt"> instance</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">vcom</span><span class="p p-Indicator">]}</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">iostream_stdio</span><span class="p p-Indicator">}</span>
+
+<span class="c1"># Memory management</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="nv">memory_manager</span><span class="p p-Indicator">}</span>
+
+<span class="nt">source</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ss5_contiki_main.c</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app_init.c</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app_process.c</span>
+
+<span class="nt">include</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">  </span><span class="nt">file_list</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app.h</span>
+
+<span class="nt">configuration</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SL_STACK_SIZE</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2048&quot;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SL_HEAP_SIZE</span>
+<span class="w">  </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;4096&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="component-configuration-files">
+<h3><span class="section-number">6.4.2. </span>Component Configuration Files<a class="headerlink" href="#component-configuration-files" title="Link to this heading"></a></h3>
+<section id="led-configuration">
+<h4><span class="section-number">6.4.2.1. </span>LED Configuration<a class="headerlink" href="#led-configuration" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">config/sl_simple_led_led1_config.h</span><a class="headerlink" href="#id12" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifndef SL_SIMPLE_LED_LED1_CONFIG_H</span>
+<span class="cp">#define SL_SIMPLE_LED_LED1_CONFIG_H</span>
+
+<span class="c1">// LED1 configuration for BRD2705A</span>
+<span class="cp">#define SL_SIMPLE_LED_LED1_PORT    gpioPortC</span>
+<span class="cp">#define SL_SIMPLE_LED_LED1_PIN     8</span>
+<span class="cp">#define SL_SIMPLE_LED_LED1_POLARITY 0  </span><span class="c1">// Active high</span>
+
+<span class="cp">#endif </span><span class="c1">// SL_SIMPLE_LED_LED1_CONFIG_H</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="clock-configuration">
+<h4><span class="section-number">6.4.2.2. </span>Clock Configuration<a class="headerlink" href="#clock-configuration" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">config/sl_device_init_hfxo_config.h</span><a class="headerlink" href="#id13" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifndef SL_DEVICE_INIT_HFXO_CONFIG_H</span>
+<span class="cp">#define SL_DEVICE_INIT_HFXO_CONFIG_H</span>
+
+<span class="c1">// HFXO configuration for EFR32ZG28</span>
+<span class="cp">#define SL_DEVICE_INIT_HFXO_MODE           cmuHfxoOscMode_Crystal</span>
+<span class="cp">#define SL_DEVICE_INIT_HFXO_FREQ           38400000UL</span>
+<span class="cp">#define SL_DEVICE_INIT_HFXO_PRECISION      500</span>
+<span class="cp">#define SL_DEVICE_INIT_HFXO_CTUNE          120</span>
+
+<span class="cp">#endif </span><span class="c1">// SL_DEVICE_INIT_HFXO_CONFIG_H</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="uart-configuration">
+<h4><span class="section-number">6.4.2.3. </span>UART Configuration<a class="headerlink" href="#uart-configuration" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">config/sl_uartdrv_usart_vcom_config.h</span><a class="headerlink" href="#id14" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifndef SL_UARTDRV_USART_VCOM_CONFIG_H</span>
+<span class="cp">#define SL_UARTDRV_USART_VCOM_CONFIG_H</span>
+
+<span class="c1">// VCOM configuration for debug output</span>
+<span class="cp">#define SL_UARTDRV_USART_VCOM_PERIPHERAL      USART0</span>
+<span class="cp">#define SL_UARTDRV_USART_VCOM_PERIPHERAL_NO   0</span>
+
+<span class="c1">// Pin configuration</span>
+<span class="cp">#define SL_UARTDRV_USART_VCOM_TX_PORT         gpioPortA</span>
+<span class="cp">#define SL_UARTDRV_USART_VCOM_TX_PIN          5</span>
+<span class="cp">#define SL_UARTDRV_USART_VCOM_RX_PORT         gpioPortA</span>
+<span class="cp">#define SL_UARTDRV_USART_VCOM_RX_PIN          6</span>
+
+<span class="c1">// UART parameters</span>
+<span class="cp">#define SL_UARTDRV_USART_VCOM_BAUDRATE        115200</span>
+<span class="cp">#define SL_UARTDRV_USART_VCOM_DATA_BITS       8</span>
+<span class="cp">#define SL_UARTDRV_USART_VCOM_PARITY          USART_FRAME_PARITY_NONE</span>
+<span class="cp">#define SL_UARTDRV_USART_VCOM_STOP_BITS       1</span>
+
+<span class="cp">#endif </span><span class="c1">// SL_UARTDRV_USART_VCOM_CONFIG_H</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="contiki-ng-integration-patterns">
+<h2><span class="section-number">6.5. </span>Contiki-NG Integration Patterns<a class="headerlink" href="#contiki-ng-integration-patterns" title="Link to this heading"></a></h2>
+<section id="hybrid-application-architecture">
+<h3><span class="section-number">6.5.1. </span>Hybrid Application Architecture<a class="headerlink" href="#hybrid-application-architecture" title="Link to this heading"></a></h3>
+<p>The integration follows a hybrid pattern combining Contiki-NG processes with Gecko SDK components:</p>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text">Hybrid Architecture Design</span><a class="headerlink" href="#id15" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────┐
+│                  Main Application                      │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌─────────────────┐    ┌─────────────────────────────┐ │
+│  │ Gecko SDK Layer │    │    Contiki-NG Layer         │ │
+│  │                 │    │                             │ │
+│  │ • sl_system     │    │ • Process scheduler         │ │
+│  │ • TrustZone     │◄──►│ • Event timers              │ │
+│  │ • Hardware      │    │ • Memory management         │ │
+│  │ • Power Mgmt    │    │ • Application logic         │ │
+│  │                 │    │                             │ │
+│  └─────────────────┘    └─────────────────────────────┘ │
+│                                                         │
+│  ┌─────────────────────────────────────────────────────┐ │
+│  │              Hardware Abstraction                  │ │
+│  │         (Gecko SDK Components)                     │ │
+│  └─────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+</div>
+</section>
+<section id="main-application-implementation">
+<h3><span class="section-number">6.5.2. </span>Main Application Implementation<a class="headerlink" href="#main-application-implementation" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text">ss5_contiki_main.c - Hybrid Main Application</span><a class="headerlink" href="#id16" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_component_catalog.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_system_init.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_power_manager.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_simple_led_instances.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_iostream_init_instances.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;app.h&quot;</span>
+
+<span class="c1">// Contiki-NG integration</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;contiki.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sys/process.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sys/etimer.h&quot;</span>
+
+<span class="c1">// Debug and monitoring variables</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">debug_main_loop_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">debug_contiki_processes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">debug_system_ticks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">debug_led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="c1">// Step 1: Initialize Silicon Labs system (includes TrustZone)</span>
+<span class="w">  </span><span class="n">sl_system_init</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Step 2: Initialize I/O streams for debug output</span>
+<span class="w">  </span><span class="n">sl_iostream_init_instances</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Step 3: Initialize Contiki-NG</span>
+<span class="w">  </span><span class="n">process_init</span><span class="p">();</span>
+<span class="w">  </span><span class="n">process_start</span><span class="p">(</span><span class="o">&amp;</span><span class="n">etimer_process</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// Step 4: Initialize application</span>
+<span class="w">  </span><span class="n">app_init</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;EFR32ZG28 Contiki-NG LED Blink Started</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hardware: BRD2705A Rev. A02</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Device: EFR32ZG28B312F1024IM48-A</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// Main execution loop</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">debug_main_loop_count</span><span class="o">++</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Gecko SDK power management</span>
+<span class="w">    </span><span class="n">sl_power_manager_step</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Contiki-NG process scheduling</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">process_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">process_run</span><span class="p">();</span>
+<span class="w">    </span><span class="n">debug_contiki_processes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">process_count</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// Application-specific processing</span>
+<span class="w">    </span><span class="n">app_process_action</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Update system monitoring</span>
+<span class="w">    </span><span class="n">debug_system_ticks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl_sleeptimer_get_tick_count</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="application-layer-implementation">
+<h3><span class="section-number">6.5.3. </span>Application Layer Implementation<a class="headerlink" href="#application-layer-implementation" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text">app_process.c - Application Logic</span><a class="headerlink" href="#id17" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_simple_led_instances.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_sleeptimer.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_iostream.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;app.h&quot;</span>
+
+<span class="c1">// Application state</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">blink_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">last_blink_tick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">last_debug_tick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="c1">// Configuration</span>
+<span class="cp">#define BLINK_INTERVAL_TICKS  32768  </span><span class="c1">// 1 second at 32kHz</span>
+<span class="cp">#define DEBUG_INTERVAL_TICKS  163840 </span><span class="c1">// 5 seconds at 32kHz</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">app_init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="c1">// Initialize LED to known state</span>
+<span class="w">  </span><span class="n">sl_led_turn_off</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sl_led_led1</span><span class="p">);</span>
+<span class="w">  </span><span class="n">led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Initialize timing</span>
+<span class="w">  </span><span class="n">last_blink_tick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl_sleeptimer_get_tick_count</span><span class="p">();</span>
+<span class="w">  </span><span class="n">last_debug_tick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">last_blink_tick</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Application initialized</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">app_process_action</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">uint32_t</span><span class="w"> </span><span class="n">current_tick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sl_sleeptimer_get_tick_count</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// LED blink logic</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">current_tick</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">last_blink_tick</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">BLINK_INTERVAL_TICKS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">led_state</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">led_state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">sl_led_turn_on</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sl_led_led1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">sl_led_turn_off</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sl_led_led1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">blink_counter</span><span class="o">++</span><span class="p">;</span>
+<span class="w">    </span><span class="n">debug_led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">led_state</span><span class="p">;</span>
+<span class="w">    </span><span class="n">debug_led_toggle_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blink_counter</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">last_blink_tick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_tick</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Debug output (every 5 seconds)</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">current_tick</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">last_debug_tick</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">DEBUG_INTERVAL_TICKS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;LED Blinks: %lu, State: %s, Tick: %lu</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="n">blink_counter</span><span class="p">,</span>
+<span class="w">           </span><span class="n">led_state</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;ON&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;OFF&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="n">current_tick</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">last_debug_tick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_tick</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="contiki-ng-process-integration">
+<h3><span class="section-number">6.5.4. </span>Contiki-NG Process Integration<a class="headerlink" href="#contiki-ng-process-integration" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id18">
+<div class="code-block-caption"><span class="caption-text">contiki_led_process.c - Contiki Process Integration</span><a class="headerlink" href="#id18" title="Link to this code"></a></div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;contiki.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sys/etimer.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;sl_simple_led_instances.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="c1">// Contiki process for LED control</span>
+<span class="n">PROCESS</span><span class="p">(</span><span class="n">led_blink_process</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;LED Blink Process&quot;</span><span class="p">);</span>
+
+<span class="n">PROCESS_THREAD</span><span class="p">(</span><span class="n">led_blink_process</span><span class="p">,</span><span class="w"> </span><span class="n">ev</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">etimer</span><span class="w"> </span><span class="n">timer</span><span class="p">;</span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="w">  </span><span class="n">PROCESS_BEGIN</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Contiki LED process started</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Set timer for 1 second</span>
+<span class="w">    </span><span class="n">etimer_set</span><span class="p">(</span><span class="o">&amp;</span><span class="n">timer</span><span class="p">,</span><span class="w"> </span><span class="n">CLOCK_SECOND</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Wait for timer event</span>
+<span class="w">    </span><span class="n">PROCESS_WAIT_EVENT_UNTIL</span><span class="p">(</span><span class="n">etimer_expired</span><span class="p">(</span><span class="o">&amp;</span><span class="n">timer</span><span class="p">));</span>
+
+<span class="w">    </span><span class="c1">// Toggle LED using Gecko SDK</span>
+<span class="w">    </span><span class="n">led_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">led_state</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">led_state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">sl_led_turn_on</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sl_led_led1</span><span class="p">);</span>
+<span class="w">      </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;LED ON</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">sl_led_turn_off</span><span class="p">(</span><span class="o">&amp;</span><span class="n">sl_led_led1</span><span class="p">);</span>
+<span class="w">      </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;LED OFF</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">PROCESS_END</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Integration function to start Contiki process</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">start_contiki_led_process</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">process_start</span><span class="p">(</span><span class="o">&amp;</span><span class="n">led_blink_process</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="build-system-integration">
+<h2><span class="section-number">6.6. </span>Build System Integration<a class="headerlink" href="#build-system-integration" title="Link to this heading"></a></h2>
+<section id="slc-build-process">
+<h3><span class="section-number">6.6.1. </span>SLC Build Process<a class="headerlink" href="#slc-build-process" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id19">
+<div class="code-block-caption"><span class="caption-text">SS5 Build Commands</span><a class="headerlink" href="#id19" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Navigate to project directory</span>
+<span class="nb">cd</span><span class="w"> </span>ss5_project
+
+<span class="c1"># Generate build files from .slcp</span>
+slc<span class="w"> </span>generate
+
+<span class="c1"># Build the project</span>
+make<span class="w"> </span>-f<span class="w"> </span>Makefile
+
+<span class="c1"># Alternative: Use specific target</span>
+make<span class="w"> </span>-f<span class="w"> </span>Makefile<span class="w"> </span>release
+
+<span class="c1"># Clean build</span>
+make<span class="w"> </span>-f<span class="w"> </span>Makefile<span class="w"> </span>clean
+</pre></div>
+</div>
+</div>
+</section>
+<section id="generated-makefile-analysis">
+<h3><span class="section-number">6.6.2. </span>Generated Makefile Analysis<a class="headerlink" href="#generated-makefile-analysis" title="Link to this heading"></a></h3>
+<p>The SLC system generates comprehensive Makefiles:</p>
+<div class="literal-block-wrapper docutils container" id="id20">
+<div class="code-block-caption"><span class="caption-text">Generated Makefile Structure</span><a class="headerlink" href="#id20" title="Link to this code"></a></div>
+<div class="highlight-make notranslate"><div class="highlight"><pre><span></span><span class="c"># Automatically generated Makefile</span>
+<span class="nv">PROJECT_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>efr32zg28_contiki
+
+<span class="c"># SDK paths (automatically configured)</span>
+<span class="nv">SDK_PATH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">$(</span>GECKO_SDK_PATH<span class="k">)</span>
+<span class="nv">COPIED_SDK_PATH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>gecko_sdk_4.4.0
+
+<span class="c"># Device configuration</span>
+<span class="nv">DEVICE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>EFR32ZG28B312F1024IM48
+<span class="nv">ARCHITECTURE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>cortex-m33
+
+<span class="c"># Component includes (automatically generated)</span>
+<span class="nv">INCLUDES</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-I<span class="k">$(</span>SDK_PATH<span class="k">)</span>/platform/Device/SiliconLabs/EFR32ZG28/Include<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-I<span class="k">$(</span>SDK_PATH<span class="k">)</span>/platform/common/inc<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-I<span class="k">$(</span>SDK_PATH<span class="k">)</span>/hardware/board/inc<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-I<span class="k">$(</span>SDK_PATH<span class="k">)</span>/platform/driver/inc<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-I<span class="k">$(</span>SDK_PATH<span class="k">)</span>/platform/service/device_init/inc<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-I<span class="k">$(</span>SDK_PATH<span class="k">)</span>/platform/service/power_manager/inc<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-I<span class="k">$(</span>SDK_PATH<span class="k">)</span>/app/common/util/app_log/inc
+
+<span class="c"># Component sources (automatically generated)</span>
+<span class="nv">SOURCES</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="k">$(</span>SDK_PATH<span class="k">)</span>/platform/Device/SiliconLabs/EFR32ZG28/Source/system_efr32zg28.c<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="k">$(</span>SDK_PATH<span class="k">)</span>/platform/Device/SiliconLabs/EFR32ZG28/Source/startup_efr32zg28.c<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="k">$(</span>SDK_PATH<span class="k">)</span>/platform/service/device_init/src/sl_device_init_nvic.c<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="k">$(</span>SDK_PATH<span class="k">)</span>/platform/service/device_init/src/sl_device_init_hfxo.c<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="k">$(</span>SDK_PATH<span class="k">)</span>/platform/driver/leddrv/src/sl_simple_led.c
+
+<span class="c"># Linker script (device-specific)</span>
+<span class="nv">LINKER_SCRIPT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">$(</span>SDK_PATH<span class="k">)</span>/platform/Device/SiliconLabs/EFR32ZG28/Source/GCC/efr32zg28.ld
+</pre></div>
+</div>
+</div>
+</section>
+<section id="manual-build-integration">
+<h3><span class="section-number">6.6.3. </span>Manual Build Integration<a class="headerlink" href="#manual-build-integration" title="Link to this heading"></a></h3>
+<p>For integrating with custom build systems:</p>
+<div class="literal-block-wrapper docutils container" id="id21">
+<div class="code-block-caption"><span class="caption-text">Manual Gecko SDK Integration</span><a class="headerlink" href="#id21" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="c1"># Set SDK path</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">GECKO_SDK_PATH</span><span class="o">=</span>/path/to/gecko_sdk
+
+<span class="c1"># Define device</span>
+<span class="nv">DEVICE</span><span class="o">=</span>EFR32ZG28B312F1024IM48
+
+<span class="c1"># Compiler settings</span>
+<span class="nv">CC</span><span class="o">=</span>arm-none-eabi-gcc
+<span class="nv">CFLAGS</span><span class="o">=</span><span class="s2">&quot;-mcpu=cortex-m33 -mthumb -mfloat-abi=soft&quot;</span>
+<span class="nv">CFLAGS</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$CFLAGS</span><span class="s2"> -DEFR32ZG28B312F1024IM48=1&quot;</span>
+<span class="nv">CFLAGS</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$CFLAGS</span><span class="s2"> -DSL_COMPONENT_CATALOG_PRESENT=1&quot;</span>
+
+<span class="c1"># Include paths</span>
+<span class="nv">INCLUDES</span><span class="o">=</span><span class="s2">&quot;-I</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">/platform/Device/SiliconLabs/EFR32ZG28/Include&quot;</span>
+<span class="nv">INCLUDES</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$INCLUDES</span><span class="s2"> -I</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">/platform/common/inc&quot;</span>
+<span class="nv">INCLUDES</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$INCLUDES</span><span class="s2"> -I</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">/platform/emlib/inc&quot;</span>
+<span class="nv">INCLUDES</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$INCLUDES</span><span class="s2"> -I</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">/platform/driver/leddrv/inc&quot;</span>
+
+<span class="c1"># Source files</span>
+<span class="nv">SOURCES</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">/platform/Device/SiliconLabs/EFR32ZG28/Source/system_efr32zg28.c&quot;</span>
+<span class="nv">SOURCES</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$SOURCES</span><span class="s2"> </span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">/platform/Device/SiliconLabs/EFR32ZG28/Source/startup_efr32zg28.c&quot;</span>
+<span class="nv">SOURCES</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$SOURCES</span><span class="s2"> </span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">/platform/driver/leddrv/src/sl_simple_led.c&quot;</span>
+
+<span class="c1"># Compile</span>
+<span class="nv">$CC</span><span class="w"> </span><span class="nv">$CFLAGS</span><span class="w"> </span><span class="nv">$INCLUDES</span><span class="w"> </span>-T<span class="nv">$GECKO_SDK_PATH</span>/platform/Device/SiliconLabs/EFR32ZG28/Source/GCC/efr32zg28.ld<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-o<span class="w"> </span>application.elf<span class="w"> </span><span class="nv">$SOURCES</span><span class="w"> </span>application.c
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="integration-best-practices">
+<h2><span class="section-number">6.7. </span>Integration Best Practices<a class="headerlink" href="#integration-best-practices" title="Link to this heading"></a></h2>
+<section id="component-selection-guidelines">
+<h3><span class="section-number">6.7.1. </span>Component Selection Guidelines<a class="headerlink" href="#component-selection-guidelines" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Start Minimal</strong>: Begin with essential components only</p></li>
+<li><p><strong>Add Incrementally</strong>: Add components as needed</p></li>
+<li><p><strong>Check Dependencies</strong>: Use SLC to verify component compatibility</p></li>
+<li><p><strong>Optimize for Size</strong>: Remove unused components for production</p></li>
+</ol>
+</section>
+<section id="security-integration">
+<h3><span class="section-number">6.7.2. </span>Security Integration<a class="headerlink" href="#security-integration" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Always Include device_init</strong>: Required for TrustZone initialization</p></li>
+<li><p><strong>Use Official Components</strong>: Leverage authenticated Silicon Labs drivers</p></li>
+<li><p><strong>Avoid Direct Register Access</strong>: Use component APIs for peripheral control</p></li>
+<li><p><strong>Security-First Design</strong>: Plan for TrustZone constraints from project start</p></li>
+</ol>
+</section>
+<section id="performance-optimization">
+<h3><span class="section-number">6.7.3. </span>Performance Optimization<a class="headerlink" href="#performance-optimization" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Power Management</strong>: Always include power_manager component</p></li>
+<li><p><strong>Clock Optimization</strong>: Configure clocks for application requirements</p></li>
+<li><p><strong>Memory Management</strong>: Use memory_manager for dynamic allocation</p></li>
+<li><p><strong>Debug Removal</strong>: Remove debug components for production builds</p></li>
+</ol>
+</section>
+</section>
+<section id="troubleshooting-integration-issues">
+<h2><span class="section-number">6.8. </span>Troubleshooting Integration Issues<a class="headerlink" href="#troubleshooting-integration-issues" title="Link to this heading"></a></h2>
+<section id="common-integration-problems">
+<h3><span class="section-number">6.8.1. </span>Common Integration Problems<a class="headerlink" href="#common-integration-problems" title="Link to this heading"></a></h3>
+<section id="component-not-found">
+<h4><span class="section-number">6.8.1.1. </span>Component Not Found<a class="headerlink" href="#component-not-found" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id22">
+<div class="code-block-caption"><span class="caption-text">Component Resolution Issues</span><a class="headerlink" href="#id22" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: Component &#39;simple_led&#39; not found
+
+Solution:
+1. Verify Gecko SDK version supports EFR32ZG28
+2. Check SDK path configuration
+3. Regenerate project with &#39;slc generate&#39;
+4. Verify component exists in SDK installation
+</pre></div>
+</div>
+</div>
+</section>
+<section id="build-failures">
+<h4><span class="section-number">6.8.1.2. </span>Build Failures<a class="headerlink" href="#build-failures" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id23">
+<div class="code-block-caption"><span class="caption-text">Build Error Resolution</span><a class="headerlink" href="#id23" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: undefined reference to &#39;sl_simple_led_init_instances&#39;
+
+Solution:
+1. Check component configuration in .slcp
+2. Verify all component dependencies included
+3. Regenerate autogen files with &#39;slc generate&#39;
+4. Check source file inclusion in Makefile
+</pre></div>
+</div>
+</div>
+</section>
+<section id="memory-errors">
+<h4><span class="section-number">6.8.1.3. </span>Memory Errors<a class="headerlink" href="#memory-errors" title="Link to this heading"></a></h4>
+<div class="literal-block-wrapper docutils container" id="id24">
+<div class="code-block-caption"><span class="caption-text">Memory Configuration Issues</span><a class="headerlink" href="#id24" title="Link to this code"></a></div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Error: region `FLASH&#39; overflowed by X bytes
+
+Solution:
+1. Increase stack/heap size in project configuration
+2. Remove unused components
+3. Enable compiler optimizations (-Os)
+4. Check linker script memory definitions
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="integration-verification">
+<h3><span class="section-number">6.8.2. </span>Integration Verification<a class="headerlink" href="#integration-verification" title="Link to this heading"></a></h3>
+<div class="literal-block-wrapper docutils container" id="id25">
+<div class="code-block-caption"><span class="caption-text">Integration Test Script</span><a class="headerlink" href="#id25" title="Link to this code"></a></div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;=== Gecko SDK Integration Verification ===&quot;</span>
+
+<span class="c1"># Check SDK path</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-z<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;❌ GECKO_SDK_PATH not set&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># Check EFR32ZG28 support</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$GECKO_SDK_PATH</span><span class="s2">/platform/Device/SiliconLabs/EFR32ZG28&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ EFR32ZG28 support found&quot;</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;❌ EFR32ZG28 support not found&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># Test SLC command</span>
+<span class="k">if</span><span class="w"> </span><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>slc<span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ SLC command available&quot;</span>
+<span class="w">    </span>slc<span class="w"> </span>--version
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;⚠️ SLC command not found (SS5 installation required)&quot;</span>
+<span class="k">fi</span>
+
+<span class="c1"># Test build</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-f<span class="w"> </span><span class="s2">&quot;efr32zg28_contiki.slcp&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Testing project build...&quot;</span>
+<span class="w">    </span>slc<span class="w"> </span>generate
+<span class="w">    </span><span class="k">if</span><span class="w"> </span>make<span class="w"> </span>-f<span class="w"> </span>Makefile<span class="w"> </span>--dry-run<span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>/dev/null<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;✅ Build system functional&quot;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;❌ Build system issues detected&quot;</span>
+<span class="w">    </span><span class="k">fi</span>
+<span class="k">fi</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Integration verification complete&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="summary-gecko-sdk-integration-success-factors">
+<h2><span class="section-number">6.9. </span>Summary: Gecko SDK Integration Success Factors<a class="headerlink" href="#summary-gecko-sdk-integration-success-factors" title="Link to this heading"></a></h2>
+<section id="critical-success-factors">
+<h3><span class="section-number">6.9.1. </span>Critical Success Factors<a class="headerlink" href="#critical-success-factors" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Use Latest SDK</strong>: Ensure EFR32ZG28 support and TrustZone compatibility</p></li>
+<li><p><strong>Component-Based Design</strong>: Leverage SLC component system for proper integration</p></li>
+<li><p><strong>Security Awareness</strong>: Always include device_init for TrustZone handling</p></li>
+<li><p><strong>Official Tools</strong>: Use Simplicity Studio 5 for reliable development experience</p></li>
+<li><p><strong>Hybrid Architecture</strong>: Combine Gecko SDK hardware access with Contiki-NG application logic</p></li>
+</ol>
+<p><strong>Integration Status</strong>: ✅ <strong>Complete</strong> - Full Gecko SDK integration achieved with working TrustZone compatibility and LED control functionality.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="trustzone-analysis.html" class="btn btn-neutral float-left" title="5. TrustZone Security Analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="files-created.html" class="btn btn-neutral float-right" title="7. Files Created" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, PHYTEC EMBEDDED PVT. LTD. - SANGEZHIL &amp; ABARNIKA &amp; MADHUMITHA.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
