@@ -1,0 +1,15 @@
+../Drivers/oled/ssd1306_tests.c:115:6:ssd1306_TestBitmaps	16	static
+../Drivers/oled/ssd1306_tests.c:137:6:ssd1306_TestBorder	16	static
+../Drivers/oled/ssd1306_tests.c:163:6:ssd1306_TestFonts1	24	static
+../Drivers/oled/ssd1306_tests.c:196:6:ssd1306_TestFonts2	32	static
+../Drivers/oled/ssd1306_tests.c:221:6:ssd1306_TestFonts3	16	static
+../Drivers/oled/ssd1306_tests.c:241:6:ssd1306_TestFPS	120	static
+../Drivers/oled/ssd1306_tests.c:279:6:ssd1306_TestLine	16	static
+../Drivers/oled/ssd1306_tests.c:287:6:ssd1306_TestRectangle	32	static
+../Drivers/oled/ssd1306_tests.c:297:6:ssd1306_TestRectangleFill	16	static
+../Drivers/oled/ssd1306_tests.c:305:6:ssd1306_TestRectangleInvert	16	static
+../Drivers/oled/ssd1306_tests.c:329:6:ssd1306_TestCircle	16	static
+../Drivers/oled/ssd1306_tests.c:344:6:ssd1306_TestArc	16	static
+../Drivers/oled/ssd1306_tests.c:351:6:ssd1306_TestPolyline	32	static
+../Drivers/oled/ssd1306_tests.c:368:6:ssd1306_TestDrawBitmap	16	static
+../Drivers/oled/ssd1306_tests.c:383:6:ssd1306_TestAll	8	static
